@@ -61,7 +61,7 @@ export function Hero() {
   const onInteract = (t: HeroInteraction) => setLastAction(t === 'transform' ? 'TRANSFORM' : t === 'reset' ? 'RESET' : 'UNLEASHED');
 
   return (
-    <section id="home" ref={root} aria-labelledby="hero-title" className="relative h-[100svh] min-h-[620px] overflow-hidden bg-ink outline-none">
+    <section id="home" ref={root} aria-labelledby="hero-title" className="relative min-h-[100svh] overflow-hidden bg-ink outline-none lg:h-[100svh] lg:min-h-[640px]">
       <div className="grid-lines pointer-events-none absolute inset-0 opacity-40 [mask-image:radial-gradient(ellipse_at_center,black_20%,transparent_75%)]" aria-hidden />
 
       <motion.div className="absolute inset-0" style={{ scale: sceneScale }}>
@@ -77,11 +77,11 @@ export function Hero() {
       </motion.div>
 
       {/* Overlay typography — pointer-events pass through to the canvas except on controls */}
-      <motion.div style={{ y: textY, opacity: fade }} className="pointer-events-none relative z-10 flex h-full flex-col justify-between section-pad pb-6 pt-24 sm:pb-8 sm:pt-28">
-        <div className="flex items-start justify-between gap-6">
-          <div data-hero="fade" className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-muted">
-            <span className="h-1.5 w-1.5 animate-pulseDot rounded-full bg-acid" aria-hidden />
-            <span>{site.status}</span>
+      <motion.div style={{ y: textY, opacity: fade }} className="pointer-events-none relative z-10 flex min-h-[100svh] flex-col justify-between section-pad pb-6 pt-20 sm:pb-8 sm:pt-28 lg:h-full">
+        <div className="flex items-start justify-between gap-4">
+          <div data-hero="fade" className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.16em] text-muted sm:text-[11px] sm:tracking-[0.18em]">
+            <span className="h-1.5 w-1.5 shrink-0 animate-pulseDot rounded-full bg-acid" aria-hidden />
+            <span className="line-clamp-1">{site.status}</span>
           </div>
           <div data-hero="fade" className="hidden text-right font-mono text-[10px] uppercase leading-relaxed tracking-[0.18em] text-muted md:block" aria-hidden>
             <div>SYS/ARJUN v1.0</div>
@@ -90,8 +90,8 @@ export function Hero() {
           </div>
         </div>
 
-        <div>
-          <p data-hero="fade" className="ub-label mb-4 max-w-[34ch] sm:mb-6">
+        <div className="mt-12 sm:mt-0">
+          <p data-hero="fade" className="ub-label mb-3 max-w-[36ch] sm:mb-6">
             AI/ML Engineering &nbsp;·&nbsp; Software Engineering &nbsp;·&nbsp; Research
           </p>
           <h1 id="hero-title" className="display-xl select-none" aria-label="ARJUN">
@@ -101,36 +101,36 @@ export function Hero() {
               ))}
             </span>
           </h1>
-          <div data-hero="rule" className="my-5 h-px w-full bg-line sm:my-7" aria-hidden />
+          <div data-hero="rule" className="my-4 h-px w-full bg-line sm:my-7" aria-hidden />
 
-          <div className="grid gap-6 lg:grid-cols-12 lg:items-end">
+          <div className="grid gap-5 lg:grid-cols-12 lg:items-end lg:gap-6">
             <div className="lg:col-span-5">
-              <p className="overflow-hidden font-display text-lg font-medium uppercase leading-tight tracking-[-0.02em] sm:text-2xl">
+              <p className="overflow-hidden font-display text-base font-medium uppercase leading-tight tracking-[-0.02em] sm:text-2xl">
                 <span data-hero="line" className="block">Think beyond.</span>
               </p>
-              <p className="overflow-hidden font-display text-lg font-medium uppercase leading-tight tracking-[-0.02em] text-acid sm:text-2xl">
+              <p className="overflow-hidden font-display text-base font-medium uppercase leading-tight tracking-[-0.02em] text-acid sm:text-2xl">
                 <span data-hero="line" className="block">Build without limits.</span>
               </p>
-              <p data-hero="fade" className="mt-4 max-w-md text-[15px] leading-relaxed text-bone/75">
+              <p data-hero="fade" className="mt-3 max-w-md text-sm leading-relaxed text-bone/75 sm:mt-4 sm:text-[15px]">
                 <span className="text-bone">{site.headline}</span> {site.intro}
               </p>
-              <p data-hero="fade" className="ub-label mt-3">Created by {site.creator}.</p>
+              <p data-hero="fade" className="ub-label mt-2.5 sm:mt-3">Created by {site.creator}.</p>
             </div>
 
-            <div className="flex flex-wrap items-center gap-3 lg:col-span-7 lg:justify-end">
-              <div data-hero="fade" className="pointer-events-auto">
-                <Magnetic onClick={() => scrollTo('projects')} cursor="Explore" className="group h-12 gap-3 bg-acid px-5 font-mono text-xs font-medium uppercase tracking-[0.14em] text-ink">
+            <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 lg:col-span-7 lg:justify-end">
+              <div data-hero="fade" className="pointer-events-auto w-full sm:w-auto">
+                <Magnetic onClick={() => scrollTo('projects')} cursor="Explore" className="group h-11 w-full justify-center gap-3 bg-acid px-5 font-mono text-xs font-medium uppercase tracking-[0.14em] text-ink sm:h-12 sm:w-auto">
                   Explore my work <ArrowDown size={14} className="transition-transform group-hover:translate-y-0.5" aria-hidden />
                 </Magnetic>
               </div>
-              <div data-hero="fade" className="pointer-events-auto">
-                <Magnetic onClick={() => scrollTo('contact')} cursor="Say hi" className="group h-12 gap-3 border border-bone/30 px-5 font-mono text-xs uppercase tracking-[0.14em] hover:border-bone">
+              <div data-hero="fade" className="pointer-events-auto flex-1 sm:flex-initial">
+                <Magnetic onClick={() => scrollTo('contact')} cursor="Say hi" className="group h-11 w-full justify-center gap-3 border border-bone/30 px-4 font-mono text-xs uppercase tracking-[0.14em] hover:border-bone sm:h-12 sm:w-auto sm:px-5">
                   Get in touch <ArrowUpRight size={14} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden />
                 </Magnetic>
               </div>
               <div data-hero="fade" className="pointer-events-auto">
-                <button type="button" onClick={resetHero} className="ub-btn h-12" aria-label="Reset 3D camera" data-cursor="Reset">
-                  <RotateCcw size={13} aria-hidden /> Reset camera
+                <button type="button" onClick={resetHero} className="ub-btn h-11 px-3 sm:h-12" aria-label="Reset 3D camera" data-cursor="Reset">
+                  <RotateCcw size={13} aria-hidden /> <span className="hidden xs:inline sm:inline">Reset camera</span>
                 </button>
               </div>
             </div>

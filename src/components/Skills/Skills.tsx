@@ -62,7 +62,7 @@ export function Skills() {
             label="Skills universe"
             description="A 3D network of skill nodes grouped into clusters: programming, frontend, backend, database, AI and ML, and tools. A text list of the same skills is available with the Text list button."
             fallback={<div className="absolute inset-0 overflow-y-auto p-4" data-lenis-prevent><SkillIndex highlight={null} /></div>}
-            className="h-[78svh] min-h-[540px] border border-line bg-ink"
+            className="h-[72svh] min-h-[500px] border border-line bg-ink sm:h-[78svh] sm:min-h-[560px]"
           />
         ) : (
           <SkillIndex highlight={selected?.id ?? null} />

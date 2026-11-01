@@ -3,13 +3,13 @@
  * Changes to this file must be coordinated between the lead and the 3D agent.
  */
 
-export type SceneQuality = 'high' | 'low';
+export type SceneQuality = 'high' | 'balanced' | 'low';
 
 /** Props every scene receives from <SceneFrame>. */
 export interface SceneBaseProps {
   /** true while the scene is on-screen. When false, stop rendering (frameloop="never"). */
   active: boolean;
-  /** 'low' on mobile / low-power devices: reduce geometry, particles, DPR, lights. */
+  /** Adaptive quality tier ('high' | 'balanced' | 'low') based on GPU, DPR, cores, and FPS. */
   quality: SceneQuality;
   /** prefers-reduced-motion: disable idle auto-animation, keep interactions. */
   reducedMotion: boolean;

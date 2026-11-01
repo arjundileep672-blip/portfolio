@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef } from 'react';
 import * as THREE from 'three';
-import { useFrame, type ThreeEvent } from '@react-three/fiber';
+import { useFrame, useThree, type ThreeEvent } from '@react-three/fiber';
 import { Html } from '@react-three/drei';
 import type { NeuronInfo, SceneQuality } from '../../types';
 import {
@@ -37,7 +37,12 @@ export function ResNetGraph({
   onSelectNeuron,
   onSelectLayer,
 }: ResNetGraphProps) {
+  const { viewport } = useThree();
   const { layers, neurons, synapses, skipArcs } = useMemo(() => buildResNetTopology(), []);
+
+  // Adapt horizontal layer spacing on narrow portrait viewports so all 7 layers remain readable
+  const graphScaleX = viewport.aspect < 0.65 ? 0.68 : viewport.aspect < 0.95 ? 0.82 : 1.0;
+  const graphScaleY = viewport.aspect < 0.65 ? 0.88 : 1.0;
 
   const neuronMeshRefs = useRef<(THREE.Mesh | null)[]>([]);
   const forwardPulsesRef = useRef<THREE.InstancedMesh>(null);
@@ -113,6 +118,13 @@ export function ResNetGraph({
     };
   }, [synapses, selectedLayer, selectedNeuron]);
 
+  useEffect(() => {
+    return () => {
+      normalSynapseGeo.dispose();
+      activeSynapseGeo.dispose();
+    };
+  }, [normalSynapseGeo, activeSynapseGeo]);
+
   // Skip Arc Line Geometries
   const skipArcGeos = useMemo(
     () =>
@@ -123,8 +135,14 @@ export function ResNetGraph({
     [skipArcs]
   );
 
-  const forwardParticleCount = quality === 'low' ? 36 : 84;
-  const skipParticleCount = quality === 'low' ? 12 : 24;
+  useEffect(() => {
+    return () => {
+      skipArcGeos.forEach((a) => a.geo.dispose());
+    };
+  }, [skipArcGeos]);
+
+  const forwardParticleCount = quality === 'low' ? 32 : quality === 'balanced' ? 58 : 84;
+  const skipParticleCount = quality === 'low' ? 10 : quality === 'balanced' ? 18 : 24;
 
   useFrame((_, delta) => {
     const dt = Math.min(delta, 0.05);
@@ -235,8 +253,10 @@ export function ResNetGraph({
     );
   };
 
+  const neuronSegments = quality === 'low' ? 12 : quality === 'balanced' ? 16 : 22;
+
   return (
-    <group>
+    <group scale={[graphScaleX, graphScaleY, 1]}>
       {/* Layer Frame Planes & Overhead Badges */}
       {layers.map((spec: LayerSpec) => {
         const isSelectedLayer = selectedLayer === spec.index;
@@ -337,36 +357,42 @@ export function ResNetGraph({
         </group>
       ))}
 
-      {/* Neuron Spheres */}
+      {/* Neuron Spheres with Touch-Friendly Hit Area */}
       {neurons.map((n, idx) => {
         const isSelected =
           selectedNeuron?.layerIndex === n.layerIndex &&
           selectedNeuron?.neuronIndex === n.neuronIndex;
         return (
-          <mesh
-            key={n.id}
-            ref={(el) => {
-              neuronMeshRefs.current[idx] = el;
-            }}
-            position={n.position}
-            onClick={(e) => handleNeuronClick(e, n)}
-            onPointerOver={(e) => {
-              e.stopPropagation();
-              setSceneCursor('Inspect Neuron');
-            }}
-            onPointerOut={() => setSceneCursor(null)}
-          >
-            <sphereGeometry args={[0.13, quality === 'low' ? 14 : 22, quality === 'low' ? 14 : 22]} />
-            <meshStandardMaterial
-              color={isSelected ? '#C5FF55' : n.color}
-              emissive={isSelected ? '#C5FF55' : n.color}
-              emissiveIntensity={0.45}
-              roughness={0.22}
-              metalness={0.65}
-              transparent
-              opacity={0.95}
-            />
-          </mesh>
+          <group key={n.id} position={n.position}>
+            <mesh
+              onClick={(e) => handleNeuronClick(e, n)}
+              onPointerOver={(e) => {
+                e.stopPropagation();
+                setSceneCursor('Inspect Neuron');
+              }}
+              onPointerOut={() => setSceneCursor(null)}
+            >
+              <sphereGeometry args={[0.24, 10, 10]} />
+              <meshBasicMaterial transparent opacity={0} depthWrite={false} />
+            </mesh>
+            <mesh
+              ref={(el) => {
+                neuronMeshRefs.current[idx] = el;
+              }}
+              raycast={() => null}
+            >
+              <sphereGeometry args={[0.13, neuronSegments, neuronSegments]} />
+              <meshStandardMaterial
+                color={isSelected ? '#C5FF55' : n.color}
+                emissive={isSelected ? '#C5FF55' : n.color}
+                emissiveIntensity={0.45}
+                roughness={0.22}
+                metalness={0.65}
+                transparent
+                opacity={0.95}
+              />
+            </mesh>
+          </group>
         );
       })}
 

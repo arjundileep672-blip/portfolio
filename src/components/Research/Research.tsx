@@ -162,7 +162,7 @@ export function Research() {
           label="Neural network"
           description="A 3D neural network with layers of neurons, synapse lines and residual skip connections. Signals propagate through the layers. Controls allow play, pause, reset, speed and layer selection."
           fallback={<div className="absolute inset-0 flex items-center justify-center p-8"><div className="w-full max-w-md"><ResidualBlockDiagram /></div></div>}
-          className="h-[80svh] min-h-[560px] border border-line bg-ink"
+          className="h-[72svh] min-h-[500px] border border-line bg-ink sm:h-[80svh] sm:min-h-[560px]"
         />
         <p className="sr-only" aria-live="polite">{neuron ? `Selected neuron ${neuron.neuronIndex} in ${neuron.layerName}` : ''}</p>
       </div>

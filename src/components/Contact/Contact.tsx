@@ -37,9 +37,9 @@ export function Contact() {
       <div className="mt-14 flex flex-wrap items-center gap-3">
         {emailHref ? (
           <>
-            <Magnetic href={emailHref} cursor="Write" className="group h-14 gap-3 bg-acid px-6 font-mono text-sm font-medium uppercase tracking-[0.12em] text-ink">
-              <Mail size={16} aria-hidden /> {email!.value}
-              <ArrowUpRight size={16} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden />
+            <Magnetic href={emailHref} cursor="Write" className="group h-14 max-w-full justify-center gap-2.5 bg-acid px-4 font-mono text-xs font-medium uppercase tracking-[0.1em] text-ink sm:gap-3 sm:px-6 sm:text-sm sm:tracking-[0.12em]">
+              <Mail size={16} className="shrink-0" aria-hidden /> <span className="truncate">{email!.value}</span>
+              <ArrowUpRight size={16} className="shrink-0 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden />
             </Magnetic>
             <button type="button" onClick={copy} className="ub-btn h-14 px-5" aria-label="Copy email address" data-cursor="Copy">
               {copied ? <Check size={14} className="text-acid" aria-hidden /> : <Copy size={14} aria-hidden />} {copied ? 'Copied' : 'Copy email'}

@@ -103,13 +103,14 @@ export function Navigation() {
         {open && (
           <motion.div
             id="mobile-menu"
-            className="fixed inset-0 top-0 -z-10 flex flex-col justify-end bg-ink px-6 pb-10 pt-24 lg:hidden"
+            data-lenis-prevent
+            className="fixed inset-0 top-0 -z-10 flex flex-col justify-between overflow-y-auto bg-ink px-5 pb-8 pt-20 sm:px-6 sm:pb-10 sm:pt-24 lg:hidden"
             initial={{ clipPath: 'inset(0 0 100% 0)' }}
             animate={{ clipPath: 'inset(0 0 0% 0)' }}
             exit={{ clipPath: 'inset(0 0 100% 0)' }}
             transition={{ duration: 0.6, ease: [0.76, 0, 0.24, 1] }}
           >
-            <ul className="flex flex-col">
+            <ul className="my-auto flex flex-col">
               {navItems.map((n, i) => (
                 <motion.li
                   key={n.id}
@@ -121,7 +122,7 @@ export function Navigation() {
                   <a
                     href={`#${n.id}`}
                     onClick={(e) => { e.preventDefault(); go(n.id); }}
-                    className={`flex items-baseline justify-between py-3 font-display text-3xl font-bold tracking-[-0.03em] sm:text-4xl ${active === n.id ? 'text-acid' : 'text-bone'}`}
+                    className={`flex items-baseline justify-between py-2.5 font-display text-2xl font-bold tracking-[-0.03em] sm:py-3 sm:text-4xl ${active === n.id ? 'text-acid' : 'text-bone'}`}
                   >
                     {n.label}
                     <span className="font-mono text-xs text-muted">0{i}</span>
@@ -129,7 +130,7 @@ export function Navigation() {
                 </motion.li>
               ))}
             </ul>
-            <p className="ub-label mt-8">Think beyond. Build without limits.</p>
+            <p className="ub-label mt-6 shrink-0">Think beyond. Build without limits.</p>
           </motion.div>
         )}
       </AnimatePresence>

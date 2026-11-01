@@ -2,11 +2,12 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, AdaptiveDpr } from '@react-three/drei';
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
-import * as THREE from 'three';
-import { Sparkles } from 'lucide-react';
+import { Hand, Sparkles } from 'lucide-react';
 import type { HeroSceneProps } from '../types';
 import { HeroSculpture } from './components/HeroSculpture';
 import { StudioEnvironment } from '../shared/StudioEnvironment';
+import { useResponsiveCamera } from '@/hooks/useResponsiveScene';
+import { useInputMode } from '@/hooks/useDevice';
 
 const MORPH_STATES = [
   { id: 0, code: '01', name: 'HARMONIC GEODESIC' },
@@ -14,9 +15,6 @@ const MORPH_STATES = [
   { id: 2, code: '03', name: 'TECTONIC SPIRE' },
   { id: 3, code: '04', name: 'SINGULARITY FOLD' },
 ] as const;
-
-const DEFAULT_CAM_POS = new THREE.Vector3(0, 0, 5.2);
-const DEFAULT_TARGET = new THREE.Vector3(0, 0, 0);
 
 function CameraRig({
   engaged,
@@ -27,6 +25,12 @@ function CameraRig({
 }) {
   const controlsRef = useRef<OrbitControlsImpl>(null);
   const resettingRef = useRef(false);
+  const { cameraPos, targetPos, isPortrait } = useResponsiveCamera({
+    desktopPos: [0, 0, 5.2],
+    desktopTarget: [0, 0, 0],
+    baseFov: 42,
+    minHorizontalSpan: 3.4,
+  });
 
   useEffect(() => {
     if (resetCounter > 0) {
@@ -34,19 +38,27 @@ function CameraRig({
     }
   }, [resetCounter]);
 
+  // Keep camera distance responsive when viewport aspect changes
+  useEffect(() => {
+    if (!controlsRef.current) return;
+    controlsRef.current.object.position.copy(cameraPos);
+    controlsRef.current.target.copy(targetPos);
+    controlsRef.current.update();
+  }, [cameraPos.z, isPortrait]); // eslint-disable-line react-hooks/exhaustive-deps
+
   useFrame(({ camera }, delta) => {
     if (!resettingRef.current || !controlsRef.current) return;
     const dt = Math.min(delta, 0.05);
-    camera.position.lerp(DEFAULT_CAM_POS, Math.min(1, dt * 6.5));
-    controlsRef.current.target.lerp(DEFAULT_TARGET, Math.min(1, dt * 6.5));
+    camera.position.lerp(cameraPos, Math.min(1, dt * 6.5));
+    controlsRef.current.target.lerp(targetPos, Math.min(1, dt * 6.5));
     controlsRef.current.update();
 
     if (
-      camera.position.distanceTo(DEFAULT_CAM_POS) < 0.02 &&
-      controlsRef.current.target.distanceTo(DEFAULT_TARGET) < 0.02
+      camera.position.distanceTo(cameraPos) < 0.02 &&
+      controlsRef.current.target.distanceTo(targetPos) < 0.02
     ) {
-      camera.position.copy(DEFAULT_CAM_POS);
-      controlsRef.current.target.copy(DEFAULT_TARGET);
+      camera.position.copy(cameraPos);
+      controlsRef.current.target.copy(targetPos);
       controlsRef.current.update();
       resettingRef.current = false;
     }
@@ -64,7 +76,7 @@ function CameraRig({
       rotateSpeed={0.75}
       zoomSpeed={0.8}
       minDistance={2.8}
-      maxDistance={8.2}
+      maxDistance={isPortrait ? 10.5 : 8.2}
       onStart={() => {
         resettingRef.current = false;
       }}
@@ -86,6 +98,8 @@ export default function HeroScene({
   const [secretActive, setSecretActive] = useState(false);
   const [pulseTrigger, setPulseTrigger] = useState(0);
   const [resetCounter, setResetCounter] = useState(0);
+  const [touchSpinEnabled, setTouchSpinEnabled] = useState(false);
+  const { isFinePointer } = useInputMode();
 
   const prevResetSignal = useRef(resetSignal);
   const prevSecretSignal = useRef(secretSignal);
@@ -99,6 +113,7 @@ export default function HeroScene({
   const handleReset = useCallback(() => {
     setMorphIndex(0);
     setSecretActive(false);
+    setTouchSpinEnabled(false);
     setResetCounter((prev) => prev + 1);
     onInteract?.('reset');
   }, [onInteract]);
@@ -111,7 +126,7 @@ export default function HeroScene({
     }
   }, [resetSignal, handleReset]);
 
-  // Respond to external secretSignal (Konami code / terminal `unbound --unleash`)
+  // Respond to external secretSignal (Konami code / terminal `arjun --unleash`)
   useEffect(() => {
     if (secretSignal !== prevSecretSignal.current) {
       prevSecretSignal.current = secretSignal;
@@ -122,12 +137,26 @@ export default function HeroScene({
   }, [secretSignal, onInteract]);
 
   const currentMorph = MORPH_STATES[morphIndex % MORPH_STATES.length];
+  const effectiveEngaged = engaged || touchSpinEnabled;
+  const dprRange: [number, number] =
+    quality === 'low' ? [1, 1.25] : quality === 'balanced' ? [1, 1.5] : [1, 2];
 
   return (
-    <div className={`relative h-full w-full select-none ${className}`}>
+    <div
+      className={`relative h-full w-full select-none ${className}`}
+      style={
+        !isFinePointer && touchSpinEnabled
+          ? { pointerEvents: 'auto' }
+          : undefined
+      }
+      data-touch-override={!isFinePointer && touchSpinEnabled ? 'true' : undefined}
+    >
+      {!isFinePointer && touchSpinEnabled && (
+        <style>{`[data-touch-override="true"] canvas { pointer-events: auto !important; touch-action: none !important; }`}</style>
+      )}
       <Canvas
         frameloop={active ? 'always' : 'never'}
-        dpr={quality === 'low' ? [1, 1.5] : [1, 2]}
+        dpr={dprRange}
         camera={{ position: [0, 0, 5.2], fov: 42, near: 0.1, far: 50 }}
         gl={{ alpha: true, antialias: quality !== 'low', powerPreference: 'high-performance' }}
       >
@@ -135,7 +164,7 @@ export default function HeroScene({
         <ambientLight intensity={0.45} />
         <directionalLight position={[5, 6, 5]} intensity={1.8} color="#F2F2EA" />
         <pointLight position={[-4, -3, 3]} intensity={1.2} color="#C5FF55" distance={14} />
-        {quality === 'high' && <StudioEnvironment preset="acid" intensity={0.9} />}
+        {quality !== 'low' && <StudioEnvironment preset="acid" intensity={quality === 'high' ? 0.9 : 0.7} />}
 
         <HeroSculpture
           quality={quality}
@@ -148,16 +177,16 @@ export default function HeroScene({
           onReset={handleReset}
         />
 
-        <CameraRig engaged={engaged} resetCounter={resetCounter} />
+        <CameraRig engaged={effectiveEngaged} resetCounter={resetCounter} />
       </Canvas>
 
-      {/* Accessible Interactive Morph Mode Pill (top-right on mobile, mid-right on desktop) */}
-      <div className="pointer-events-auto absolute right-5 top-20 z-20 hidden sm:flex items-center gap-2 lg:right-14 lg:top-1/2 lg:-translate-y-1/2 lg:flex-col lg:items-end">
+      {/* Accessible Interactive Morph Mode + Touch 3D Spin Pill */}
+      <div className="pointer-events-auto absolute right-4 top-20 z-20 flex flex-wrap items-center justify-end gap-1.5 sm:right-8 sm:top-20 lg:right-14 lg:top-1/2 lg:-translate-y-1/2 lg:flex-col lg:items-end">
         <button
           type="button"
           onClick={handleTransform}
-          className="ub-btn !min-h-[34px] !px-2.5 !py-1 bg-ink/85 backdrop-blur-sm"
-          title="Click to transform 3D sculpture geometry"
+          className="ub-btn min-h-[40px] bg-ink/85 px-2.5 py-1 text-[10px] backdrop-blur-sm sm:min-h-[36px] sm:px-3 sm:text-[11px]"
+          title="Click or tap to transform 3D sculpture geometry"
           aria-label={`Sculpture state ${currentMorph.code} ${currentMorph.name}. Activate to transform.`}
         >
           <Sparkles size={12} className="text-acid" aria-hidden />
@@ -165,6 +194,19 @@ export default function HeroScene({
             {secretActive ? 'OVERDRIVE // UNLEASHED' : `${currentMorph.code} // ${currentMorph.name}`}
           </span>
         </button>
+
+        {!isFinePointer && (
+          <button
+            type="button"
+            onClick={() => setTouchSpinEnabled((v) => !v)}
+            aria-pressed={touchSpinEnabled}
+            className="ub-btn min-h-[40px] bg-ink/85 px-2.5 py-1 text-[10px] backdrop-blur-sm"
+            aria-label={touchSpinEnabled ? 'Lock 3D sculpture and resume page scroll' : 'Unlock touch rotation and zoom for 3D sculpture'}
+          >
+            <Hand size={12} className="text-acid" aria-hidden />
+            <span>{touchSpinEnabled ? 'Done 3D · Scroll' : 'Spin 3D'}</span>
+          </button>
+        )}
       </div>
     </div>
   );

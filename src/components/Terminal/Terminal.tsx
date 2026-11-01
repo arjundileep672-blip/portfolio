@@ -140,7 +140,7 @@ export function Terminal() {
                     autoCapitalize="off"
                     spellCheck={false}
                     aria-label="Terminal command input"
-                    className="peer w-full bg-transparent text-bone caret-transparent outline-none disabled:opacity-100"
+                    className="peer w-full bg-transparent text-base text-bone caret-transparent outline-none disabled:opacity-100 sm:text-[13px]"
                     style={{ cursor: 'text' }}
                   />
                   <span aria-hidden className="pointer-events-none absolute top-0 whitespace-pre text-transparent">

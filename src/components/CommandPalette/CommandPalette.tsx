@@ -107,7 +107,7 @@ export function CommandPalette() {
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 placeholder="Type a command or search…"
-                className="h-14 flex-1 bg-transparent font-mono text-sm text-bone placeholder:text-muted focus:outline-none"
+                className="h-14 flex-1 bg-transparent font-mono text-base text-bone placeholder:text-muted focus:outline-none sm:text-sm"
                 role="combobox"
                 aria-expanded="true"
                 aria-controls="cmd-list"

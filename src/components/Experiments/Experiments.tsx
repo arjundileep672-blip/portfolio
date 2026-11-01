@@ -25,7 +25,7 @@ export function Experiments() {
           label="Playground"
           description="A procedural 3D playground: choose between torus knot, icosahedron, deformed sphere and particle geometry, change material and lighting, and adjust rotation speed and deformation."
           fallback={<div className="absolute inset-0 flex items-center justify-center p-8 text-center text-bone/70">The playground needs WebGL, which isn't available in this browser.</div>}
-          className="h-[82svh] min-h-[600px] border border-line bg-ink"
+          className="h-[72svh] min-h-[500px] border border-line bg-ink sm:h-[82svh] sm:min-h-[600px]"
         />
       </div>
     </section>

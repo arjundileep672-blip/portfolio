@@ -83,13 +83,23 @@ export function HeroSculpture({
     []
   );
 
-  // Geometries memoized by quality tier
-  const detail = quality === 'low' ? 32 : 64;
+  // Geometries memoized by 3-tier quality level with proper GPU disposal
+  const detail = quality === 'low' ? 28 : quality === 'balanced' ? 44 : 64;
   const coreGeo = useMemo(() => new THREE.IcosahedronGeometry(1.22, detail), [detail]);
-  const cageGeo = useMemo(() => new THREE.IcosahedronGeometry(1.52, quality === 'low' ? 1 : 2), [quality]);
+  const cageGeo = useMemo(
+    () => new THREE.IcosahedronGeometry(1.52, quality === 'low' ? 1 : 2),
+    [quality]
+  );
 
-  // Orbital atmospheric particle buffer
-  const particleCount = quality === 'low' ? 110 : 320;
+  useEffect(() => {
+    return () => {
+      coreGeo.dispose();
+      cageGeo.dispose();
+    };
+  }, [coreGeo, cageGeo]);
+
+  // Orbital atmospheric particle buffer scaled by quality tier
+  const particleCount = quality === 'low' ? 95 : quality === 'balanced' ? 190 : 320;
   const { particlePositions, particlePhases } = useMemo(() => {
     const positions = new Float32Array(particleCount * 3);
     const phases = new Float32Array(particleCount * 3); // [radius, speed, angleOffset]
@@ -108,10 +118,28 @@ export function HeroSculpture({
     return { particlePositions: positions, particlePhases: phases };
   }, [particleCount]);
 
-  // Desktop vs Mobile spatial weighting: keep left side calm for hero typography on wide screens
-  const targetOffsetX = viewport.width > 7.5 ? Math.min(viewport.width * 0.19, 1.65) : 0;
-  const targetOffsetY = viewport.width > 7.5 ? 0.08 : 0.18;
-  const baseScale = viewport.width < 5.5 ? 0.78 : viewport.width < 8.5 ? 0.9 : 1.04;
+  // Responsive spatial composition:
+  // - Wide desktop: shift sculpture right so left headline & copy have calm negative space
+  // - Portrait mobile/tablet: elevate sculpture into upper-center/right zone above headline
+  // - Compact landscape: shift right with balanced scale
+  const isPortrait = viewport.aspect < 0.95;
+  const targetOffsetX =
+    viewport.width > 7.2
+      ? Math.min(viewport.width * 0.19, 1.65)
+      : isPortrait
+      ? Math.min(viewport.width * 0.05, 0.22)
+      : Math.min(viewport.width * 0.16, 1.05);
+  const targetOffsetY =
+    viewport.width > 7.2
+      ? 0.08
+      : isPortrait
+      ? Math.min(viewport.height * 0.09, 0.52)
+      : 0.12;
+  const baseScale = isPortrait
+    ? THREE.MathUtils.clamp(viewport.width * 0.23, 0.68, 0.88)
+    : viewport.width < 7.2
+    ? 0.84
+    : 1.04;
 
   useFrame((state, delta) => {
     const dt = Math.min(delta, 0.05);

@@ -10,8 +10,8 @@ import Nodes from './Nodes';
 import Connections from './Connections';
 import ControlsOverlay from './ControlsOverlay';
 import { setSceneCursor } from '../shared/cursor';
+import { useResponsiveCamera } from '@/hooks/useResponsiveScene';
 
-const DEFAULT_CAMERA_POS = new THREE.Vector3(0, 1.4, 8.6);
 const DEFAULT_TARGET = new THREE.Vector3(0, 0, 0);
 
 function AmbientStarfield({ count, reducedMotion }: { count: number; reducedMotion: boolean }) {
@@ -76,20 +76,45 @@ function UniverseCameraRig({
   const controlsRef = useRef<OrbitControlsImpl>(null);
   const animatingCamRef = useRef(false);
 
+  const { cameraPos: defaultCamPos, isPortrait } = useResponsiveCamera({
+    desktopPos: [0, 1.4, 8.6],
+    desktopTarget: [0, 0, 0],
+    portraitTarget: [0, -0.25, 0],
+    baseFov: 46,
+    minHorizontalSpan: 7.5,
+  });
+
+  const effectiveTarget = useMemo(() => {
+    if (isPortrait && hasSelection) {
+      // Shift target slightly down on portrait so focused node sits above the mobile bottom sheet
+      return focusTarget.clone().add(new THREE.Vector3(0, -0.45, 0));
+    }
+    return focusTarget;
+  }, [focusTarget, isPortrait, hasSelection]);
+
+  const effectiveCamPos = useMemo(() => {
+    if (!focusCameraPos) return defaultCamPos;
+    if (!hasSelection) return defaultCamPos;
+    if (isPortrait) {
+      return focusCameraPos.clone().add(new THREE.Vector3(0, 0.2, 1.6));
+    }
+    return focusCameraPos;
+  }, [focusCameraPos, defaultCamPos, hasSelection, isPortrait]);
+
   useEffect(() => {
     animatingCamRef.current = true;
-  }, [focusTarget, focusCameraPos, resetCounter]);
+  }, [effectiveTarget, effectiveCamPos, resetCounter]);
 
   useFrame(({ camera }, delta) => {
     if (!controlsRef.current) return;
     const dt = Math.min(delta, 0.05);
 
     // Smoothly interpolate OrbitControls target to focused node or cluster
-    controlsRef.current.target.lerp(focusTarget, Math.min(1, dt * 5.0));
+    controlsRef.current.target.lerp(effectiveTarget, Math.min(1, dt * 5.0));
 
-    if (animatingCamRef.current && focusCameraPos) {
-      camera.position.lerp(focusCameraPos, Math.min(1, dt * 4.2));
-      if (camera.position.distanceTo(focusCameraPos) < 0.08) {
+    if (animatingCamRef.current && effectiveCamPos) {
+      camera.position.lerp(effectiveCamPos, Math.min(1, dt * 4.2));
+      if (camera.position.distanceTo(effectiveCamPos) < 0.08) {
         animatingCamRef.current = false;
       }
     }
@@ -108,8 +133,8 @@ function UniverseCameraRig({
       dampingFactor={0.06}
       autoRotate={!reducedMotion && !hasSelection}
       autoRotateSpeed={0.38}
-      minDistance={3.0}
-      maxDistance={14.5}
+      minDistance={2.8}
+      maxDistance={isPortrait ? 20.0 : 14.5}
       onStart={() => {
         animatingCamRef.current = false;
       }}
@@ -185,28 +210,32 @@ export default function SkillsUniverse({
     }
     return {
       focusTarget: DEFAULT_TARGET.clone(),
-      focusCameraPos: DEFAULT_CAMERA_POS.clone(),
+      focusCameraPos: null,
     };
   }, [selectedSkill, activeCategory, nodeMap]);
+
+  const dprRange: [number, number] =
+    quality === 'low' ? [1, 1.25] : quality === 'balanced' ? [1, 1.5] : [1, 2];
+  const starCount = quality === 'low' ? 80 : quality === 'balanced' ? 160 : 240;
 
   return (
     <div className={`relative h-full w-full select-none bg-ink ${className}`}>
       <Canvas
         frameloop={active ? 'always' : 'never'}
-        dpr={quality === 'low' ? [1, 1.5] : [1, 2]}
+        dpr={dprRange}
         camera={{ position: [0, 1.4, 8.6], fov: 46, near: 0.1, far: 60 }}
         gl={{ antialias: quality !== 'low', powerPreference: 'high-performance' }}
         onPointerMissed={() => handleSelectSkill(null)}
       >
         <color attach="background" args={['#080A08']} />
-        <fog attach="fog" args={['#080A08', 10, 24]} />
+        <fog attach="fog" args={['#080A08', 10, 26]} />
         <AdaptiveDpr pixelated />
 
         <ambientLight intensity={0.65} />
         <directionalLight position={[6, 8, 6]} intensity={1.4} color="#F2F2EA" />
         <pointLight position={[0, 0, 0]} intensity={1.2} color="#C5FF55" distance={12} />
 
-        {/* Central UNBOUND Core Nexus */}
+        {/* Central ARJUN Core Nexus */}
         <mesh raycast={() => null}>
           <octahedronGeometry args={[0.28, 0]} />
           <meshBasicMaterial color="#C5FF55" wireframe transparent opacity={0.35} />
@@ -231,11 +260,12 @@ export default function SkillsUniverse({
           quality={quality}
           reducedMotion={reducedMotion}
           onSelect={handleSelectSkill}
+          onSelectCategory={handleSelectCategory}
           onHover={setHoveredSkill}
         />
 
         <AmbientStarfield
-          count={quality === 'low' ? 90 : 240}
+          count={starCount}
           reducedMotion={reducedMotion}
         />
 
@@ -245,7 +275,7 @@ export default function SkillsUniverse({
           focusTarget={focusTarget}
           focusCameraPos={focusCameraPos}
           resetCounter={resetCounter}
-          hasSelection={selectedSkill !== null || hoveredSkill !== null}
+          hasSelection={selectedSkill !== null || hoveredSkill !== null || activeCategory !== 'all'}
         />
       </Canvas>
 

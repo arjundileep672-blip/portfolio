@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { useFrame } from '@react-three/fiber';
 import { Html } from '@react-three/drei';
 import type { Skill, SkillCategoryId } from '@/data/skills';
+import type { SceneQuality } from '../types';
 import type { SkillNodeData, CategoryCluster } from './positions';
 
 interface NodesProps {
@@ -11,9 +12,10 @@ interface NodesProps {
   selectedSkill: Skill | null;
   hoveredSkill: Skill | null;
   activeCategory: SkillCategoryId | 'all';
-  quality: 'high' | 'low';
+  quality: SceneQuality;
   reducedMotion: boolean;
   onSelect: (skill: Skill | null) => void;
+  onSelectCategory?: (cat: SkillCategoryId | 'all') => void;
   onHover: (skill: Skill | null) => void;
 }
 
@@ -26,6 +28,7 @@ export default function Nodes({
   quality,
   reducedMotion,
   onSelect,
+  onSelectCategory,
   onHover,
 }: NodesProps) {
   return (
@@ -33,12 +36,15 @@ export default function Nodes({
       {/* Category cluster central cores */}
       {categoryClusters.map((cluster) => {
         const isDimmed = activeCategory !== 'all' && activeCategory !== cluster.id;
+        const isActiveCluster = activeCategory === cluster.id;
         return (
           <CategoryHub
             key={`cluster-${cluster.id}`}
             cluster={cluster}
             isDimmed={isDimmed}
+            isActiveCluster={isActiveCluster}
             reducedMotion={reducedMotion}
+            onSelectCategory={onSelectCategory}
           />
         );
       })}
@@ -53,7 +59,8 @@ export default function Nodes({
         const isCatMatch =
           activeCategory === 'all' || activeCategory === nodeData.category.id;
 
-        const isDimmed = (!isCatMatch && !isSelected && !isRelated) ||
+        const isDimmed =
+          (!isCatMatch && !isSelected && !isRelated) ||
           (selectedSkill !== null && !isSelected && !isRelated);
 
         return (
@@ -64,6 +71,7 @@ export default function Nodes({
             isHovered={isHovered}
             isRelated={Boolean(isRelated)}
             isDimmed={isDimmed}
+            isClusterFocused={activeCategory === nodeData.category.id}
             quality={quality}
             reducedMotion={reducedMotion}
             onSelect={onSelect}
@@ -78,11 +86,15 @@ export default function Nodes({
 function CategoryHub({
   cluster,
   isDimmed,
+  isActiveCluster,
   reducedMotion,
+  onSelectCategory,
 }: {
   cluster: CategoryCluster;
   isDimmed: boolean;
+  isActiveCluster: boolean;
   reducedMotion: boolean;
+  onSelectCategory?: (cat: SkillCategoryId | 'all') => void;
 }) {
   const meshRef = useRef<THREE.Mesh>(null);
   const ringRef = useRef<THREE.Mesh>(null);
@@ -98,12 +110,30 @@ function CategoryHub({
 
   return (
     <group position={cluster.center}>
-      <mesh ref={meshRef}>
+      {/* Larger invisible touch hit target for selecting category cluster */}
+      <mesh
+        onClick={(e) => {
+          e.stopPropagation();
+          onSelectCategory?.(isActiveCluster ? 'all' : cluster.id);
+        }}
+        onPointerOver={(e) => {
+          e.stopPropagation();
+          window.dispatchEvent(new CustomEvent('unbound:cursor', { detail: cluster.label }));
+        }}
+        onPointerOut={() => {
+          window.dispatchEvent(new CustomEvent('unbound:cursor', { detail: null }));
+        }}
+      >
+        <sphereGeometry args={[0.38, 12, 12]} />
+        <meshBasicMaterial transparent opacity={0} depthWrite={false} />
+      </mesh>
+
+      <mesh ref={meshRef} raycast={() => null}>
         <sphereGeometry args={[0.22, 24, 24]} />
         <meshStandardMaterial
           color={cluster.color}
           emissive={cluster.color}
-          emissiveIntensity={isDimmed ? 0.1 : 0.6}
+          emissiveIntensity={isDimmed ? 0.1 : isActiveCluster ? 0.9 : 0.6}
           roughness={0.2}
           metalness={0.8}
           transparent
@@ -112,7 +142,7 @@ function CategoryHub({
       </mesh>
 
       {/* Orbiting wireframe ring around category hub */}
-      <mesh ref={ringRef}>
+      <mesh ref={ringRef} raycast={() => null}>
         <ringGeometry args={[0.32, 0.36, 32]} />
         <meshBasicMaterial
           color={cluster.color}
@@ -134,6 +164,8 @@ function CategoryHub({
           className={`px-2 py-0.5 border text-[10px] tracking-widest font-mono uppercase whitespace-nowrap transition-opacity duration-300 ${
             isDimmed
               ? 'opacity-20 border-line text-muted bg-ink/60'
+              : isActiveCluster
+              ? 'opacity-100 border-acid text-ink bg-acid font-semibold shadow-sm'
               : 'opacity-90 border-line text-bone bg-ink-2/90 shadow-sm'
           }`}
         >
@@ -150,6 +182,7 @@ function SingleSkillNode({
   isHovered,
   isRelated,
   isDimmed,
+  isClusterFocused,
   quality,
   reducedMotion,
   onSelect,
@@ -160,7 +193,8 @@ function SingleSkillNode({
   isHovered: boolean;
   isRelated: boolean;
   isDimmed: boolean;
-  quality: 'high' | 'low';
+  isClusterFocused: boolean;
+  quality: SceneQuality;
   reducedMotion: boolean;
   onSelect: (skill: Skill | null) => void;
   onHover: (skill: Skill | null) => void;
@@ -219,18 +253,31 @@ function SingleSkillNode({
 
   const opacity = isDimmed ? 0.22 : 0.95;
 
-  // Show HTML label if hovered, selected, related, or high quality mode without heavy dimming
-  const showLabel = isSelected || isHovered || isRelated || (quality === 'high' && !isDimmed);
+  // Prevent label crowding on mobile/portrait: show individual skill labels when selected, hovered,
+  // related, when its category cluster is focused, or on high quality desktop mode
+  const showLabel =
+    isSelected ||
+    isHovered ||
+    isRelated ||
+    isClusterFocused ||
+    (quality === 'high' && !isDimmed);
+
+  const segments = quality === 'low' ? 14 : quality === 'balanced' ? 18 : 24;
 
   return (
     <group position={data.position}>
+      {/* Generous Touch/Click Hit Sphere */}
       <mesh
-        ref={meshRef}
         onClick={handleClick}
         onPointerOver={handlePointerOver}
         onPointerOut={handlePointerOut}
       >
-        <sphereGeometry args={[0.14, quality === 'low' ? 16 : 24, quality === 'low' ? 16 : 24]} />
+        <sphereGeometry args={[0.26, 10, 10]} />
+        <meshBasicMaterial transparent opacity={0} depthWrite={false} />
+      </mesh>
+
+      <mesh ref={meshRef} raycast={() => null}>
+        <sphereGeometry args={[0.14, segments, segments]} />
         <meshStandardMaterial
           color={data.category.color}
           emissive={emissiveColor}
@@ -244,7 +291,7 @@ function SingleSkillNode({
 
       {/* Selected halo ring */}
       {(isSelected || isHovered) && (
-        <mesh ref={haloRef}>
+        <mesh ref={haloRef} raycast={() => null}>
           <ringGeometry args={[0.22, 0.26, 32]} />
           <meshBasicMaterial
             color="#C5FF55"

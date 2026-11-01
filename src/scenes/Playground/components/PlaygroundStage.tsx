@@ -59,23 +59,38 @@ export function PlaygroundStage({
     return () => setSceneCursor(null);
   }, []);
 
-  // Build and store base vertex positions for real-time procedural deformation
+  // Build and store base vertex positions for real-time procedural deformation across 3 quality tiers
   const { activeGeo, basePositions, baseNormals } = useMemo(() => {
     let geo: THREE.BufferGeometry;
     const isLow = quality === 'low';
+    const isBalanced = quality === 'balanced';
 
     switch (geometryType) {
       case 'torusKnot':
-        geo = new THREE.TorusKnotGeometry(0.95, 0.28, isLow ? 96 : 160, isLow ? 18 : 32, 3, 7);
+        geo = new THREE.TorusKnotGeometry(
+          0.95,
+          0.28,
+          isLow ? 76 : isBalanced ? 120 : 160,
+          isLow ? 16 : isBalanced ? 24 : 32,
+          3,
+          7
+        );
         break;
       case 'icosahedron':
-        geo = new THREE.IcosahedronGeometry(1.32, isLow ? 3 : 5);
+        geo = new THREE.IcosahedronGeometry(1.32, isLow ? 3 : isBalanced ? 4 : 5);
         break;
       case 'deformedSphere':
-        geo = new THREE.SphereGeometry(1.28, isLow ? 36 : 64, isLow ? 36 : 64);
+        geo = new THREE.SphereGeometry(
+          1.28,
+          isLow ? 32 : isBalanced ? 48 : 64,
+          isLow ? 32 : isBalanced ? 48 : 64
+        );
         break;
       case 'parametricSurface':
-        geo = createMobiusSurfaceGeometry(isLow ? 56 : 96, isLow ? 16 : 28);
+        geo = createMobiusSurfaceGeometry(
+          isLow ? 48 : isBalanced ? 72 : 96,
+          isLow ? 16 : isBalanced ? 22 : 28
+        );
         break;
       case 'particleSystem':
       default:
@@ -111,8 +126,8 @@ export function PlaygroundStage({
     []
   );
 
-  // Max ambient orbital particles
-  const maxParticles = quality === 'low' ? 180 : 450;
+  // Max ambient orbital particles scaled by 3-tier quality
+  const maxParticles = quality === 'low' ? 140 : quality === 'balanced' ? 280 : 450;
   const particleBasePositions = useMemo(() => {
     const arr = new Float32Array(maxParticles * 3);
     for (let i = 0; i < maxParticles; i++) {
@@ -127,7 +142,7 @@ export function PlaygroundStage({
   }, [maxParticles]);
 
   // Vortex lattice count when geometryType === 'particleSystem'
-  const vortexCount = quality === 'low' ? 160 : 360;
+  const vortexCount = quality === 'low' ? 130 : quality === 'balanced' ? 240 : 360;
 
   useFrame((_, delta) => {
     const dt = Math.min(delta, 0.05);

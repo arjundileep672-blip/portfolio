@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls } from '@react-three/drei';
+import { OrbitControls, AdaptiveDpr } from '@react-three/drei';
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 import { projects } from '@/data/projects';
 import type {
@@ -23,8 +23,8 @@ import { AgentPipeline } from './components/AgentPipeline';
 import { ControlPanel, type SatelliteLabLayers } from './components/ControlPanel';
 import { StudioEnvironment } from '../shared/StudioEnvironment';
 import { setSceneCursor } from '../shared/cursor';
+import { useResponsiveCamera } from '@/hooks/useResponsiveScene';
 
-const DEFAULT_CAMERA_POS = new THREE.Vector3(0, 1.85, 5.4);
 const DEFAULT_TARGET = new THREE.Vector3(0, 0.2, 0);
 
 function CameraRig({
@@ -40,19 +40,36 @@ function CameraRig({
   const currentTarget = useRef<THREE.Vector3>(DEFAULT_TARGET.clone());
   const lastReset = useRef<number>(resetTrigger);
 
+  const { cameraPos: defaultCamPos, isPortrait } = useResponsiveCamera({
+    desktopPos: [0, 1.85, 5.4],
+    desktopTarget: [0, 0.2, 0],
+    portraitTarget: [0, -0.15, 0],
+    baseFov: 45,
+    minHorizontalSpan: 5.5,
+  });
+
+  useEffect(() => {
+    if (!controlsRef.current) return;
+    controlsRef.current.object.position.copy(defaultCamPos);
+    controlsRef.current.update();
+  }, [defaultCamPos.z, isPortrait]); // eslint-disable-line react-hooks/exhaustive-deps
+
   useEffect(() => {
     if (resetTrigger !== lastReset.current && controlsRef.current) {
       lastReset.current = resetTrigger;
       currentTarget.current.copy(DEFAULT_TARGET);
       controlsRef.current.target.copy(DEFAULT_TARGET);
-      controlsRef.current.object.position.copy(DEFAULT_CAMERA_POS);
+      controlsRef.current.object.position.copy(defaultCamPos);
       controlsRef.current.update();
     }
-  }, [resetTrigger]);
+  }, [resetTrigger, defaultCamPos]);
 
   useFrame((_, delta) => {
     if (!controlsRef.current) return;
-    currentTarget.current.lerp(targetPos, Math.min(1, delta * 3.5));
+    const effectiveTarget = isPortrait
+      ? new THREE.Vector3(targetPos.x, targetPos.y - 0.25, targetPos.z)
+      : targetPos;
+    currentTarget.current.lerp(effectiveTarget, Math.min(1, delta * 3.5));
     controlsRef.current.target.copy(currentTarget.current);
     controlsRef.current.update();
   });
@@ -64,8 +81,8 @@ function CameraRig({
       enablePan={false}
       enableRotate={true}
       rotateSpeed={0.68}
-      minDistance={2.6}
-      maxDistance={9.5}
+      minDistance={2.5}
+      maxDistance={isPortrait ? 13.5 : 9.5}
       dampingFactor={0.06}
       makeDefault
     />
@@ -173,6 +190,9 @@ export default function SatelliteLab({
     setResetTrigger((prev) => prev + 1);
   };
 
+  const dprRange: [number, number] =
+    quality === 'low' ? [1, 1.25] : quality === 'balanced' ? [1, 1.5] : [1, 2];
+
   return (
     <div className={`relative h-full w-full select-none bg-ink ${className ?? ''}`}>
       <ControlPanel
@@ -192,7 +212,7 @@ export default function SatelliteLab({
 
       <Canvas
         frameloop={active ? 'always' : 'never'}
-        dpr={quality === 'low' ? [1, 1.5] : [1, 2]}
+        dpr={dprRange}
         gl={{
           alpha: false,
           antialias: quality !== 'low',
@@ -201,13 +221,14 @@ export default function SatelliteLab({
         camera={{ position: [0, 1.85, 5.4], fov: 45 }}
       >
         <color attach="background" args={['#080A08']} />
-        <fog attach="fog" args={['#080A08', 7.5, 18]} />
+        <fog attach="fog" args={['#080A08', 8.5, 22]} />
+        <AdaptiveDpr pixelated />
 
         <ambientLight intensity={0.45} />
         <directionalLight position={[6, 5, 5]} intensity={1.35} color="#F2F2EA" />
         <directionalLight position={[-5, -3, -4]} intensity={0.4} color="#9FD4FF" />
 
-        <StudioEnvironment preset="studio" intensity={0.65} />
+        {quality !== 'low' && <StudioEnvironment preset="studio" intensity={0.65} />}
 
         {/* Rotating Globe + Geographic Region Markers */}
         <RotatingEarthSystem

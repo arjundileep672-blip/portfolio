@@ -1,8 +1,8 @@
 import { Component, Suspense, useCallback, useEffect, useState, type ComponentType, type ReactNode } from 'react';
-import { MousePointerClick, X } from 'lucide-react';
-import { useInView } from '@/hooks/useInView';
-import { hasWebGL, useDeviceQuality, usePrefersReducedMotion } from '@/hooks/useDevice';
-import type { SceneBaseProps } from '@/scenes/types';
+import { Hand, MousePointerClick, X } from 'lucide-react';
+import { hasWebGL, useAdaptiveQuality, useInputMode, usePrefersReducedMotion } from '@/hooks/useDevice';
+import { useSceneVisibility } from '@/hooks/useResponsiveScene';
+import type { SceneBaseProps, SceneQuality } from '@/scenes/types';
 
 class SceneErrorBoundary extends Component<{ fallback: ReactNode; children: ReactNode }, { failed: boolean }> {
   state = { failed: false };
@@ -10,7 +10,7 @@ class SceneErrorBoundary extends Component<{ fallback: ReactNode; children: Reac
     return { failed: true };
   }
   componentDidCatch(err: unknown) {
-    console.warn('[UNBOUND] scene failed, showing fallback', err);
+    console.warn('[ARJUN] scene failed, showing fallback', err);
   }
   render() {
     return this.state.failed ? this.props.fallback : this.props.children;
@@ -48,18 +48,34 @@ interface SceneFrameProps<P extends SceneBaseProps> {
 }
 
 /**
- * Wraps a lazily-loaded 3D scene: visibility, quality tier, reduced motion,
- * engagement (wheel zoom only after click), WebGL fallback and errors.
+ * Wraps a lazily-loaded 3D scene: visibility (IntersectionObserver + ResizeObserver + Page Visibility),
+ * 3-tier adaptive quality ('high' | 'balanced' | 'low'), reduced motion, input mode (mouse vs touch),
+ * engagement (wheel/pinch zoom & touch rotation lock), WebGL fallback and errors.
  */
 export function SceneFrame<P extends SceneBaseProps>({
-  scene: Scene, sceneProps, label, description, fallback, className = '', hint = true, keepMounted = true,
+  scene: Scene,
+  sceneProps,
+  label,
+  description,
+  fallback,
+  className = '',
+  hint = true,
+  keepMounted = true,
 }: SceneFrameProps<P>) {
-  const [ref, inView] = useInView<HTMLDivElement>('150px 0px');
+  const [ref, inView] = useSceneVisibility<HTMLDivElement>('150px 0px');
   const [mounted, setMounted] = useState(false);
   const [engaged, setEngaged] = useState(false);
-  const quality = useDeviceQuality();
+  const baseQuality = useAdaptiveQuality();
+  const [degradedQuality, setDegradedQuality] = useState<SceneQuality | null>(null);
+  const { isFinePointer } = useInputMode();
   const reducedMotion = usePrefersReducedMotion();
   const [webgl] = useState(hasWebGL);
+
+  const quality: SceneQuality = degradedQuality ?? baseQuality;
+
+  useEffect(() => {
+    setDegradedQuality(null);
+  }, [baseQuality]);
 
   useEffect(() => {
     if (inView) setMounted(true);
@@ -74,18 +90,23 @@ export function SceneFrame<P extends SceneBaseProps>({
     return () => window.removeEventListener('keydown', onKey);
   }, [engaged]);
 
-  const engage = useCallback(() => setEngaged(true), []);
+  const engageOnMouse = useCallback((e: React.PointerEvent) => {
+    if (e.pointerType === 'mouse') setEngaged(true);
+  }, []);
 
+  const touchLocked = !isFinePointer && !engaged;
   const props = { ...sceneProps, active: inView, quality, reducedMotion, engaged } as unknown as P;
 
   return (
     <div
       ref={ref}
       className={`relative overflow-hidden ${className}`}
-      onPointerDown={engage}
+      onPointerDown={engageOnMouse}
       onPointerLeave={(e) => e.pointerType === 'mouse' && setEngaged(false)}
       data-lenis-prevent={engaged ? '' : undefined}
       data-engaged={engaged}
+      data-touch-locked={touchLocked ? 'true' : 'false'}
+      data-quality={quality}
       role="group"
       aria-label={`${label} — interactive 3D scene`}
       aria-describedby={`${label.replace(/\W+/g, '-')}-desc`}
@@ -105,20 +126,30 @@ export function SceneFrame<P extends SceneBaseProps>({
         </SceneErrorBoundary>
       )}
       {webgl && hint && (
-        <div className="pointer-events-none absolute bottom-3 left-1/2 z-20 -translate-x-1/2">
+        <div className="pointer-events-none absolute bottom-2.5 left-1/2 z-30 -translate-x-1/2 sm:bottom-3">
           {engaged ? (
             <button
               type="button"
-              className="ub-btn pointer-events-auto !min-h-[32px] !py-1 text-acid"
+              className="ub-btn pointer-events-auto min-h-[44px] border-acid bg-ink/95 px-3.5 py-1.5 text-[10px] text-acid shadow-lg sm:min-h-[34px] sm:px-3 sm:py-1"
               onPointerDown={(e) => e.stopPropagation()}
               onClick={() => setEngaged(false)}
             >
-              <X size={12} aria-hidden /> Zoom on · Esc to release
+              <X size={13} aria-hidden />{' '}
+              {isFinePointer ? 'Zoom active · Esc to release' : 'Done 3D · Resume page scroll'}
             </button>
-          ) : (
-            <span className="ub-label flex items-center gap-2 bg-ink/70 px-2 py-1">
-              <MousePointerClick size={12} aria-hidden /> Drag to rotate · click to enable zoom
+          ) : isFinePointer ? (
+            <span className="ub-label flex items-center gap-2 border border-line/60 bg-ink/80 px-2.5 py-1 backdrop-blur-sm">
+              <MousePointerClick size={12} className="text-acid" aria-hidden /> Drag to rotate · click to enable zoom
             </span>
+          ) : (
+            <button
+              type="button"
+              className="ub-btn pointer-events-auto min-h-[44px] border-acid/60 bg-ink/90 px-3.5 py-1.5 text-[10px] text-bone shadow-lg backdrop-blur-sm"
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={() => setEngaged(true)}
+            >
+              <Hand size={13} className="text-acid" aria-hidden /> Tap to interact 3D (drag · pinch · select)
+            </button>
           )}
         </div>
       )}

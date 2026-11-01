@@ -106,8 +106,8 @@ function FeaturedProject({ p }: { p: Project }) {
 
           <h3
             id={`p-${p.id}`}
-            className="mt-6 font-display font-black uppercase leading-[0.86] tracking-tightest"
-            style={{ fontSize: 'clamp(2.8rem, 9.5vw, 8.8rem)' }}
+            className="mt-6 break-words font-display font-black uppercase leading-[0.88] tracking-tightest"
+            style={{ fontSize: 'clamp(1.85rem, 8.5vw, 8.8rem)' }}
           >
             {p.title}
           </h3>
@@ -284,7 +284,7 @@ function FeaturedProject({ p }: { p: Project }) {
                 </p>
               </div>
             }
-            className="h-[84svh] min-h-[620px] border border-line bg-ink"
+            className="h-[78svh] min-h-[540px] border border-line bg-ink sm:h-[84svh] sm:min-h-[620px]"
           />
         </div>
       )}

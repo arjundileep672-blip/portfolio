@@ -211,7 +211,7 @@ export function Earth({
     }
   });
 
-  const segments = quality === 'low' ? 48 : 96;
+  const segments = quality === 'low' ? 40 : quality === 'balanced' ? 64 : 96;
 
   return (
     <group>

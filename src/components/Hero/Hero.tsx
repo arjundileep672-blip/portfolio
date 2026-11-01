@@ -37,6 +37,105 @@ function PointerReadout() {
   return <span ref={ref} className="tabular-nums">+0.00 / +0.00</span>;
 }
 
+const GRID_COORDS = [
+  { id: 'c1', top: '18%', left: '14%', label: 'SEC-01 // +14.08, +82.40' },
+  { id: 'c2', top: '24%', left: '46%', label: 'GRID-A2 // +46.12, +76.10' },
+  { id: 'c3', top: '22%', left: '78%', label: 'ORB-N4 // +78.44, +78.90' },
+  { id: 'c4', top: '48%', left: '18%', label: 'VEC-04 // +18.02, +52.00' },
+  { id: 'c5', top: '44%', left: '54%', label: 'AXS-00 // +54.00, +56.00' },
+  { id: 'c6', top: '56%', left: '84%', label: 'GEO-R8 // +84.19, +44.20' },
+  { id: 'c7', top: '76%', left: '34%', label: 'SYS-B7 // +34.60, +24.15' },
+  { id: 'c8', top: '74%', left: '66%', label: 'LAT-C9 // +66.05, +26.80' },
+] as const;
+
+/** Ambient cursor-following spotlight that illuminates the cyber grid and reveals technical coordinates. */
+function CursorSpotlightGrid() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const reticleCoordRef = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const onMove = (e: PointerEvent) => {
+      const rect = el.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      el.style.setProperty('--spot-x', `${x}px`);
+      el.style.setProperty('--spot-y', `${y}px`);
+      if (reticleCoordRef.current) {
+        const gx = Math.floor(x / 80);
+        const gy = Math.floor(y / 80);
+        reticleCoordRef.current.textContent = `[${String(gx).padStart(2, '0')}:${String(gy).padStart(2, '0')}] ${(x / Math.max(1, rect.width)).toFixed(3)} / ${(y / Math.max(1, rect.height)).toFixed(3)}`;
+      }
+    };
+    window.addEventListener('pointermove', onMove, { passive: true });
+    return () => window.removeEventListener('pointermove', onMove);
+  }, []);
+
+  return (
+    <div
+      ref={containerRef}
+      className="pointer-events-none absolute inset-0 overflow-hidden"
+      style={
+        {
+          '--spot-x': '70%',
+          '--spot-y': '48%',
+        } as React.CSSProperties
+      }
+      aria-hidden
+    >
+      {/* Base dim architectural grid */}
+      <div className="grid-lines absolute inset-0 opacity-25 [mask-image:radial-gradient(ellipse_at_center,black_20%,transparent_78%)]" />
+
+      {/* Soft ambient cursor spotlight glow */}
+      <div
+        className="absolute inset-0 transition-opacity duration-500"
+        style={{
+          background:
+            'radial-gradient(480px circle at var(--spot-x) var(--spot-y), rgba(197, 255, 85, 0.085), rgba(159, 212, 255, 0.03) 42%, transparent 72%)',
+        }}
+      />
+
+      {/* Cursor-revealed acid grid + intersection nodes + technical coordinates */}
+      <div
+        className="grid-lines-acid absolute inset-0"
+        style={{
+          maskImage:
+            'radial-gradient(310px circle at var(--spot-x) var(--spot-y), black 0%, rgba(0,0,0,0.45) 52%, transparent 100%)',
+          WebkitMaskImage:
+            'radial-gradient(310px circle at var(--spot-x) var(--spot-y), black 0%, rgba(0,0,0,0.45) 52%, transparent 100%)',
+        }}
+      >
+        {GRID_COORDS.map((c) => (
+          <div
+            key={c.id}
+            className="absolute flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.2em] text-acid/75"
+            style={{ top: c.top, left: c.left }}
+          >
+            <span className="inline-block h-1 w-1 bg-acid" />
+            <span>{c.label}</span>
+          </div>
+        ))}
+
+        {/* Live floating micro-coordinate HUD tag anchored to cursor spotlight */}
+        <div
+          className="hidden items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.18em] text-acid/85 lg:flex"
+          style={{
+            position: 'absolute',
+            left: 'calc(var(--spot-x) + 18px)',
+            top: 'calc(var(--spot-y) + 18px)',
+          }}
+        >
+          <span className="h-1.5 w-1.5 border border-acid/80" />
+          <span ref={reticleCoordRef} className="tabular-nums">
+            [08:05] 0.700 / 0.480
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function Hero() {
   const { loaded, heroResetSignal, secretSignal, resetHero, scrollTo } = useUnbound();
   const root = useRef<HTMLElement>(null);
@@ -68,11 +167,8 @@ export function Hero() {
       aria-labelledby="hero-title"
       className="relative min-h-[100svh] overflow-hidden bg-ink outline-none lg:h-[100svh] lg:min-h-[640px]"
     >
-      {/* Subtle architectural grid + atmospheric backlight glow behind sculpture */}
-      <div
-        className="grid-lines pointer-events-none absolute inset-0 opacity-30 [mask-image:radial-gradient(ellipse_at_center,black_15%,transparent_70%)]"
-        aria-hidden
-      />
+      {/* Interactive Cursor-Following Spotlight Grid + Atmospheric Backlight Glow */}
+      <CursorSpotlightGrid />
       <div
         className="pointer-events-none absolute right-[4%] top-1/2 h-[54vmin] w-[54vmin] -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(197,255,85,0.11)_0%,rgba(159,212,255,0.05)_42%,transparent_72%)] blur-3xl"
         aria-hidden
@@ -179,22 +275,22 @@ export function Hero() {
                 <Magnetic
                   onClick={() => scrollTo('projects')}
                   cursor="Explore"
-                  className="group h-11 w-full justify-center gap-3 bg-acid px-5 font-mono text-xs font-medium uppercase tracking-[0.14em] text-ink shadow-[0_0_25px_rgba(197,255,85,0.22)] transition-shadow hover:shadow-[0_0_35px_rgba(197,255,85,0.4)] sm:h-12 sm:w-auto"
+                  className="ub-cta-primary group h-11 w-full justify-center gap-3 px-6 font-mono text-xs font-semibold uppercase tracking-[0.15em] sm:h-12 sm:w-auto"
                 >
-                  Selected Work{' '}
-                  <ArrowDown size={14} className="transition-transform group-hover:translate-y-0.5" aria-hidden />
+                  <span>Explore My Work</span>
+                  <ArrowDown size={14} className="transition-transform duration-300 group-hover:translate-y-0.5" aria-hidden />
                 </Magnetic>
               </div>
               <div data-hero="fade" className="pointer-events-auto flex-1 sm:flex-initial">
                 <Magnetic
                   onClick={() => scrollTo('contact')}
                   cursor="Say hi"
-                  className="group h-11 w-full justify-center gap-3 border border-bone/25 bg-ink/70 px-4 font-mono text-xs uppercase tracking-[0.14em] backdrop-blur-md hover:border-bone sm:h-12 sm:w-auto sm:px-5"
+                  className="ub-cta-secondary group h-11 w-full justify-center gap-3 px-5 font-mono text-xs uppercase tracking-[0.15em] backdrop-blur-xl sm:h-12 sm:w-auto sm:px-6"
                 >
-                  Contact{' '}
+                  <span>Get in Touch</span>
                   <ArrowUpRight
                     size={14}
-                    className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                    className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
                     aria-hidden
                   />
                 </Magnetic>
@@ -203,8 +299,9 @@ export function Hero() {
                 <button
                   type="button"
                   onClick={resetHero}
-                  className="ub-btn h-11 bg-ink/70 px-3 backdrop-blur-md sm:h-12"
+                  className="ub-cta-secondary inline-flex h-11 items-center justify-center px-3.5 backdrop-blur-xl sm:h-12"
                   aria-label="Reset 3D camera"
+                  title="Reset 3D camera"
                   data-cursor="Reset"
                 >
                   <RotateCcw size={13} aria-hidden />

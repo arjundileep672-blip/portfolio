@@ -180,18 +180,54 @@ export default function HeroScene({
         <CameraRig engaged={effectiveEngaged} resetCounter={resetCounter} />
       </Canvas>
 
-      {/* Docked Bottom-Right HUD Pill (clear of orbital rings and top header) */}
+      {/* Cyber Glitch & Expanding Pulse Ring Effect on Morph / Overdrive */}
+      {pulseTrigger > 0 && !reducedMotion && (
+        <div
+          key={pulseTrigger}
+          className="pointer-events-none absolute inset-0 z-10 overflow-hidden"
+          aria-hidden
+        >
+          {/* Expanding concentric cyber pulse rings */}
+          <div
+            className="absolute left-1/2 top-[48%] h-[42vmin] w-[42vmin] rounded-full border border-acid/80 shadow-[0_0_40px_rgba(197,255,85,0.45),inset_0_0_30px_rgba(197,255,85,0.2)] lg:left-[68%] lg:top-1/2"
+            style={{ animation: 'morphRingExpand 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards' }}
+          />
+          <div
+            className="absolute left-1/2 top-[48%] h-[32vmin] w-[32vmin] rounded-full border border-dashed border-[#9FD4FF]/70 lg:left-[68%] lg:top-1/2"
+            style={{ animation: 'morphRingExpand 0.95s 0.06s cubic-bezier(0.16, 1, 0.3, 1) forwards' }}
+          />
+          {/* Brief horizontal cyber-glitch scanline flash */}
+          <div
+            className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent_0%,rgba(197,255,85,0.09)_48%,rgba(159,212,255,0.14)_50%,transparent_54%)]"
+            style={{ animation: 'cyberGlitchFlash 0.42s steps(4) forwards' }}
+          />
+        </div>
+      )}
+
+      {/* Docked Bottom-Right HUD Pill with Interactive Morph Step Indicators */}
       <div className="pointer-events-auto absolute bottom-5 right-5 z-20 flex flex-wrap items-center justify-end gap-1.5 sm:bottom-7 sm:right-8 lg:bottom-8 lg:right-14">
         <button
           type="button"
           onClick={handleTransform}
-          className="ub-btn min-h-[38px] border-line/90 bg-ink/85 px-3.5 py-1.5 text-[10px] text-bone/90 shadow-[0_8px_24px_rgba(0,0,0,0.65)] backdrop-blur-xl transition-all hover:border-acid/70 hover:text-acid sm:min-h-[36px]"
+          className="ub-btn group min-h-[38px] border-line/90 bg-ink/85 px-3.5 py-1.5 text-[10px] text-bone/90 shadow-[0_8px_24px_rgba(0,0,0,0.65)] backdrop-blur-xl transition-all hover:border-acid/80 hover:text-acid sm:min-h-[36px]"
           title="Click or tap to transform 3D sculpture geometry"
           aria-label={`Sculpture state ${currentMorph.code} ${currentMorph.name}. Activate to transform.`}
         >
-          <Sparkles size={11} className="text-acid" aria-hidden />
+          <Sparkles size={11} className="text-acid transition-transform duration-300 group-hover:rotate-90" aria-hidden />
           <span>
             {secretActive ? 'OVERDRIVE // UNLEASHED' : `${currentMorph.code} // ${currentMorph.name}`}
+          </span>
+          <span className="ml-1.5 flex items-center gap-1" aria-hidden>
+            {MORPH_STATES.map((m) => (
+              <span
+                key={m.id}
+                className={`h-1 transition-all duration-300 ${
+                  morphIndex % MORPH_STATES.length === m.id
+                    ? 'w-3 bg-acid shadow-[0_0_8px_rgba(197,255,85,0.85)]'
+                    : 'w-1 bg-bone/25'
+                }`}
+              />
+            ))}
           </span>
         </button>
 

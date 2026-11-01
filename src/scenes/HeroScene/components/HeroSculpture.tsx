@@ -32,6 +32,8 @@ export function HeroSculpture({
   const wireCageRef = useRef<THREE.Mesh>(null);
   const outerRingARef = useRef<THREE.Group>(null);
   const outerRingBRef = useRef<THREE.Group>(null);
+  const pulseRingRef = useRef<THREE.Mesh>(null);
+  const pulseRingMatRef = useRef<THREE.MeshBasicMaterial>(null);
   const particlesRef = useRef<THREE.Points>(null);
 
   // Local mutable animation state to avoid React re-renders inside useFrame
@@ -215,6 +217,21 @@ export function HeroSculpture({
         -0.5 + s.morphCurrent * 0.4 + state.pointer.x * 0.22;
     }
 
+    // 3D Shockwave Pulse Ring on Morph / Overdrive
+    if (pulseRingRef.current && pulseRingMatRef.current) {
+      const p = s.pulseCurrent;
+      if (p > 0.01) {
+        pulseRingRef.current.visible = true;
+        // Expand outward from 0.95 to 2.55 as pulse decays from 1.0 to 0.0
+        const waveScale = 0.95 + (1.0 - p) * 1.65;
+        pulseRingRef.current.scale.setScalar(waveScale);
+        pulseRingRef.current.rotation.z = s.time * 1.4;
+        pulseRingMatRef.current.opacity = Math.min(0.85, p * 0.95);
+      } else {
+        pulseRingRef.current.visible = false;
+      }
+    }
+
     // Swirl orbital particles
     if (particlesRef.current && !reducedMotion) {
       const posAttr = particlesRef.current.geometry.getAttribute('position') as THREE.BufferAttribute;
@@ -341,6 +358,18 @@ export function HeroSculpture({
           <meshBasicMaterial color="#C5FF55" />
         </mesh>
       </group>
+
+      {/* 3D Morph Shockwave Ring (Expands outward when morphing between geometries) */}
+      <mesh ref={pulseRingRef} visible={false} raycast={() => null}>
+        <torusGeometry args={[1.2, 0.008, 12, 96]} />
+        <meshBasicMaterial
+          ref={pulseRingMatRef}
+          color="#C5FF55"
+          transparent
+          opacity={0}
+          depthWrite={false}
+        />
+      </mesh>
 
       {/* Atmospheric Orbital Particle Field */}
       <points ref={particlesRef} raycast={() => null}>

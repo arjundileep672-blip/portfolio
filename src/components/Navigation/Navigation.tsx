@@ -34,7 +34,7 @@ export function Navigation() {
 
   return (
     <motion.header
-      className="fixed inset-x-0 top-0 z-50 section-pad pt-3 sm:pt-4"
+      className="fixed inset-x-0 top-0 z-50 bg-gradient-to-b from-ink/95 via-ink/70 to-transparent pb-4 pt-3 section-pad sm:pt-4"
       initial={{ y: -80, opacity: 0 }}
       animate={loaded ? { y: 0, opacity: 1 } : {}}
       transition={{ duration: 0.8, delay: 0.3, ease: [0.2, 0.7, 0.2, 1] }}
@@ -42,7 +42,7 @@ export function Navigation() {
       <nav
         aria-label="Primary"
         className={`mx-auto flex h-12 items-center justify-between gap-4 border px-3 transition-all duration-500 sm:px-4 ${
-          scrolled ? 'border-line bg-ink/85 backdrop-blur-md' : 'border-line/40 bg-ink/55 backdrop-blur-md'
+          scrolled ? 'border-line bg-ink/90 shadow-[0_8px_32px_rgba(0,0,0,0.65)] backdrop-blur-xl' : 'border-line/60 bg-ink/80 shadow-[0_8px_28px_rgba(0,0,0,0.5)] backdrop-blur-xl'
         }`}
       >
         <a

@@ -85,9 +85,9 @@ export function HeroSculpture({
 
   // Geometries memoized by 3-tier quality level with proper GPU disposal
   const detail = quality === 'low' ? 28 : quality === 'balanced' ? 44 : 64;
-  const coreGeo = useMemo(() => new THREE.IcosahedronGeometry(1.22, detail), [detail]);
+  const coreGeo = useMemo(() => new THREE.IcosahedronGeometry(1.16, detail), [detail]);
   const cageGeo = useMemo(
-    () => new THREE.IcosahedronGeometry(1.52, quality === 'low' ? 1 : 2),
+    () => new THREE.IcosahedronGeometry(1.36, quality === 'low' ? 1 : 2),
     [quality]
   );
 
@@ -104,7 +104,7 @@ export function HeroSculpture({
     const positions = new Float32Array(particleCount * 3);
     const phases = new Float32Array(particleCount * 3); // [radius, speed, angleOffset]
     for (let i = 0; i < particleCount; i++) {
-      const r = 1.75 + Math.random() * 1.65;
+      const r = 1.55 + Math.random() * 1.35;
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.acos(2 * Math.random() - 1);
       positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
@@ -119,27 +119,27 @@ export function HeroSculpture({
   }, [particleCount]);
 
   // Responsive spatial composition:
-  // - Wide desktop: shift sculpture further right with refined scale so "ARJUN" and the sculpture breathe cleanly
+  // - Wide desktop: shift sculpture into dedicated right-hand bay so "ARJUN" (including "UN") and the navbar stay completely clear
   // - Portrait mobile/tablet: elevate sculpture into upper-center/right zone above headline
   // - Compact landscape: shift right with balanced scale
   const isPortrait = viewport.aspect < 0.95;
   const targetOffsetX =
     viewport.width > 7.2
-      ? Math.min(viewport.width * 0.24, 1.95)
+      ? Math.min(viewport.width * 0.28, 2.25)
       : isPortrait
       ? Math.min(viewport.width * 0.06, 0.25)
-      : Math.min(viewport.width * 0.18, 1.2);
+      : Math.min(viewport.width * 0.22, 1.45);
   const targetOffsetY =
     viewport.width > 7.2
-      ? 0.05
+      ? -0.08
       : isPortrait
-      ? Math.min(viewport.height * 0.09, 0.5)
-      : 0.08;
+      ? Math.min(viewport.height * 0.08, 0.44)
+      : -0.02;
   const baseScale = isPortrait
-    ? THREE.MathUtils.clamp(viewport.width * 0.21, 0.64, 0.82)
+    ? THREE.MathUtils.clamp(viewport.width * 0.2, 0.62, 0.78)
     : viewport.width < 7.2
-    ? 0.78
-    : 0.92;
+    ? 0.74
+    : 0.84;
 
   useFrame((state, delta) => {
     const dt = Math.min(delta, 0.05);
@@ -314,18 +314,18 @@ export function HeroSculpture({
         />
       </mesh>
 
-      {/* Gyroscopic Orbital Ring A (Tighter radius so it never intersects the top navbar) */}
+      {/* Gyroscopic Orbital Ring A (Compact radius so it never reaches the top navbar or bottom HUD) */}
       <group ref={outerRingARef} rotation={[0.65, 0.2, 0]}>
         <mesh raycast={() => null}>
-          <torusGeometry args={[1.56, 0.0045, 12, quality === 'low' ? 64 : 120]} />
-          <meshBasicMaterial color="#C5FF55" transparent opacity={0.32} />
+          <torusGeometry args={[1.38, 0.004, 12, quality === 'low' ? 64 : 120]} />
+          <meshBasicMaterial color="#C5FF55" transparent opacity={0.28} />
         </mesh>
-        <mesh position={[1.56, 0, 0]} raycast={() => null}>
-          <sphereGeometry args={[0.026, 12, 12]} />
+        <mesh position={[1.38, 0, 0]} raycast={() => null}>
+          <sphereGeometry args={[0.024, 12, 12]} />
           <meshBasicMaterial color="#C5FF55" />
         </mesh>
-        <mesh position={[-1.56, 0, 0]} raycast={() => null}>
-          <sphereGeometry args={[0.02, 12, 12]} />
+        <mesh position={[-1.38, 0, 0]} raycast={() => null}>
+          <sphereGeometry args={[0.018, 12, 12]} />
           <meshBasicMaterial color="#F2F2EA" />
         </mesh>
       </group>
@@ -333,11 +333,11 @@ export function HeroSculpture({
       {/* Gyroscopic Orbital Ring B (Architectural Ring) */}
       <group ref={outerRingBRef} rotation={[-0.45, 0.5, -0.5]}>
         <mesh raycast={() => null}>
-          <torusGeometry args={[1.76, 0.0035, 8, quality === 'low' ? 64 : 120]} />
-          <meshBasicMaterial color="#F2F2EA" transparent opacity={0.14} />
+          <torusGeometry args={[1.52, 0.003, 8, quality === 'low' ? 64 : 120]} />
+          <meshBasicMaterial color="#F2F2EA" transparent opacity={0.12} />
         </mesh>
-        <mesh position={[0, 1.76, 0]} raycast={() => null}>
-          <boxGeometry args={[0.036, 0.036, 0.036]} />
+        <mesh position={[0, 1.52, 0]} raycast={() => null}>
+          <boxGeometry args={[0.032, 0.032, 0.032]} />
           <meshBasicMaterial color="#C5FF55" />
         </mesh>
       </group>

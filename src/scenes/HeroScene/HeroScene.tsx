@@ -180,12 +180,12 @@ export default function HeroScene({
         <CameraRig engaged={effectiveEngaged} resetCounter={resetCounter} />
       </Canvas>
 
-      {/* Subtle Docked Morph Mode Pill (top-right below HUD, never overlapping the sculpture center) */}
-      <div className="pointer-events-auto absolute right-4 top-20 z-20 flex flex-wrap items-center justify-end gap-1.5 sm:right-8 sm:top-28 lg:right-14 lg:top-32">
+      {/* Docked Bottom-Right HUD Pill (clear of orbital rings and top header) */}
+      <div className="pointer-events-auto absolute bottom-5 right-5 z-20 flex flex-wrap items-center justify-end gap-1.5 sm:bottom-7 sm:right-8 lg:bottom-8 lg:right-14">
         <button
           type="button"
           onClick={handleTransform}
-          className="ub-btn min-h-[38px] border-line/80 bg-ink/75 px-3 py-1 text-[10px] text-bone/90 backdrop-blur-md transition-all hover:border-acid/60 hover:text-acid sm:min-h-[34px]"
+          className="ub-btn min-h-[38px] border-line/90 bg-ink/85 px-3.5 py-1.5 text-[10px] text-bone/90 shadow-[0_8px_24px_rgba(0,0,0,0.65)] backdrop-blur-xl transition-all hover:border-acid/70 hover:text-acid sm:min-h-[36px]"
           title="Click or tap to transform 3D sculpture geometry"
           aria-label={`Sculpture state ${currentMorph.code} ${currentMorph.name}. Activate to transform.`}
         >
@@ -200,7 +200,7 @@ export default function HeroScene({
             type="button"
             onClick={() => setTouchSpinEnabled((v) => !v)}
             aria-pressed={touchSpinEnabled}
-            className="ub-btn min-h-[38px] border-line/80 bg-ink/75 px-2.5 py-1 text-[10px] backdrop-blur-md"
+            className="ub-btn min-h-[38px] border-line/90 bg-ink/85 px-2.5 py-1.5 text-[10px] shadow-[0_8px_24px_rgba(0,0,0,0.65)] backdrop-blur-xl"
             aria-label={touchSpinEnabled ? 'Lock 3D sculpture and resume page scroll' : 'Unlock touch rotation and zoom for 3D sculpture'}
           >
             <Hand size={11} className="text-acid" aria-hidden />

@@ -78,10 +78,16 @@ export function Hero() {
         aria-hidden
       />
 
-      {/* 3D Sculpture Canvas with top/bottom vignette mask so rings never collide with navbar */}
+      {/* 3D Sculpture Canvas with explicit cross-browser top/bottom mask so rings never collide with navbar */}
       <motion.div
-        className="absolute inset-0 [mask-image:linear-gradient(to_bottom,transparent_0%,black_11%,black_90%,transparent_100%)]"
-        style={{ scale: sceneScale }}
+        className="absolute inset-0"
+        style={{
+          scale: sceneScale,
+          maskImage:
+            'linear-gradient(to bottom, transparent 0px, transparent 84px, black 175px, black 88%, transparent 100%)',
+          WebkitMaskImage:
+            'linear-gradient(to bottom, transparent 0px, transparent 84px, black 175px, black 88%, transparent 100%)',
+        }}
       >
         <SceneFrame<HeroSceneProps>
           scene={HeroScene}
@@ -93,6 +99,12 @@ export function Hero() {
           hint={false}
         />
       </motion.div>
+
+      {/* Depth-layering vignette behind left-side typography so "ARJUN" ("UN") stays razor-sharp against the 3D scene */}
+      <div
+        className="pointer-events-none absolute inset-y-0 left-0 z-[5] w-full bg-[radial-gradient(ellipse_62%_55%_at_26%_62%,rgba(8,10,8,0.88)_0%,rgba(8,10,8,0.45)_55%,transparent_85%)]"
+        aria-hidden
+      />
 
       {/* Editorial Overlay Typography */}
       <motion.div
@@ -129,7 +141,10 @@ export function Hero() {
 
           <h1
             id="hero-title"
-            className="display-xl select-none drop-shadow-[0_12px_40px_rgba(8,10,8,0.85)]"
+            className="display-xl relative select-none lg:text-[clamp(4.5rem,12.2vw,13.6rem)]"
+            style={{
+              textShadow: '0 6px 28px rgba(8, 10, 8, 0.95), 0 18px 60px rgba(8, 10, 8, 0.85)',
+            }}
             aria-label="ARJUN"
           >
             <span className="flex overflow-hidden" aria-hidden>
@@ -137,7 +152,7 @@ export function Hero() {
                 <span
                   key={i}
                   data-hero="char"
-                  className={`inline-block ${i === 2 ? 'text-acid drop-shadow-[0_0_28px_rgba(197,255,85,0.25)]' : ''}`}
+                  className={`inline-block ${i === 2 ? 'text-acid drop-shadow-[0_0_28px_rgba(197,255,85,0.28)]' : ''}`}
                 >
                   {c}
                 </span>
@@ -211,10 +226,6 @@ export function Hero() {
               </span>
               Scroll
             </button>
-
-            <p data-hero="fade" className="hidden font-mono text-[10px] uppercase tracking-[0.2em] text-muted/80 sm:block">
-              Drag · Click to Morph
-            </p>
           </div>
         </div>
       </motion.div>

@@ -1,0 +1,138 @@
+import { AnimatePresence, motion } from 'framer-motion';
+import { Command, Menu, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { navItems } from '@/data/site';
+import { useActiveSection } from '@/hooks/useInView';
+import { useUnbound } from '@/context/UnboundContext';
+
+const ids = navItems.map((n) => n.id);
+
+export function Navigation() {
+  const { scrollTo, setPaletteOpen, loaded } = useUnbound();
+  const active = useActiveSection(ids);
+  const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const on = () => setScrolled(window.scrollY > 40);
+    on();
+    window.addEventListener('scroll', on, { passive: true });
+    return () => window.removeEventListener('scroll', on);
+  }, []);
+
+  useEffect(() => {
+    if (!open) return;
+    const on = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false);
+    window.addEventListener('keydown', on);
+    return () => window.removeEventListener('keydown', on);
+  }, [open]);
+
+  const go = (id: string) => {
+    setOpen(false);
+    scrollTo(id);
+  };
+
+  return (
+    <motion.header
+      className="fixed inset-x-0 top-0 z-50 section-pad pt-3 sm:pt-4"
+      initial={{ y: -80, opacity: 0 }}
+      animate={loaded ? { y: 0, opacity: 1 } : {}}
+      transition={{ duration: 0.8, delay: 0.3, ease: [0.2, 0.7, 0.2, 1] }}
+    >
+      <nav
+        aria-label="Primary"
+        className={`mx-auto flex h-12 items-center justify-between gap-4 border px-3 transition-colors duration-500 sm:px-4 ${
+          scrolled ? 'border-line bg-ink/85 backdrop-blur-md' : 'border-transparent bg-transparent'
+        }`}
+      >
+        <a
+          href="#home"
+          onClick={(e) => { e.preventDefault(); go('home'); }}
+          className="group flex items-center gap-2 font-display text-sm font-bold tracking-[-0.02em]"
+          data-cursor="Home"
+        >
+          <span className="inline-block h-2 w-2 bg-acid transition-transform duration-500 group-hover:rotate-45" aria-hidden />
+          UNBOUND
+        </a>
+
+        <ul className="hidden items-center gap-1 lg:flex">
+          {navItems.slice(1).map((n) => (
+            <li key={n.id} className="relative">
+              <a
+                href={`#${n.id}`}
+                onClick={(e) => { e.preventDefault(); go(n.id); }}
+                aria-current={active === n.id ? 'location' : undefined}
+                className={`relative block px-3 py-2 font-mono text-[11px] uppercase tracking-[0.16em] transition-colors ${
+                  active === n.id ? 'text-bone' : 'text-muted hover:text-bone'
+                }`}
+              >
+                {active === n.id && (
+                  <motion.span layoutId="nav-active" className="absolute inset-x-3 -bottom-px h-px bg-acid" transition={{ type: 'spring', stiffness: 380, damping: 32 }} />
+                )}
+                {n.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setPaletteOpen(true)}
+            className="ub-btn !min-h-[36px] !px-2.5"
+            aria-label="Open command palette (Ctrl+K)"
+            data-cursor="⌘K"
+          >
+            <Command size={13} aria-hidden />
+            <span className="hidden sm:inline">Ctrl K</span>
+          </button>
+          <button
+            type="button"
+            className="ub-btn !min-h-[40px] !px-2.5 lg:hidden"
+            aria-label={open ? 'Close menu' : 'Open menu'}
+            aria-expanded={open}
+            aria-controls="mobile-menu"
+            onClick={() => setOpen((v) => !v)}
+          >
+            {open ? <X size={16} /> : <Menu size={16} />}
+          </button>
+        </div>
+      </nav>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            id="mobile-menu"
+            className="fixed inset-0 top-0 -z-10 flex flex-col justify-end bg-ink px-6 pb-10 pt-24 lg:hidden"
+            initial={{ clipPath: 'inset(0 0 100% 0)' }}
+            animate={{ clipPath: 'inset(0 0 0% 0)' }}
+            exit={{ clipPath: 'inset(0 0 100% 0)' }}
+            transition={{ duration: 0.6, ease: [0.76, 0, 0.24, 1] }}
+          >
+            <ul className="flex flex-col">
+              {navItems.map((n, i) => (
+                <motion.li
+                  key={n.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.15 + i * 0.05 }}
+                  className="border-b border-line"
+                >
+                  <a
+                    href={`#${n.id}`}
+                    onClick={(e) => { e.preventDefault(); go(n.id); }}
+                    className={`flex items-baseline justify-between py-3 font-display text-3xl font-bold tracking-[-0.03em] sm:text-4xl ${active === n.id ? 'text-acid' : 'text-bone'}`}
+                  >
+                    {n.label}
+                    <span className="font-mono text-xs text-muted">0{i}</span>
+                  </a>
+                </motion.li>
+              ))}
+            </ul>
+            <p className="ub-label mt-8">Think beyond. Build without limits.</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.header>
+  );
+}

@@ -211,7 +211,7 @@ export function useResponsiveCamera({
   // Compute required distance so `minHorizontalSpan` fits within the horizontal FOV
   const vFovRad = THREE.MathUtils.degToRad(adaptedFov);
   const hFovTan = Math.tan(vFovRad / 2) * aspect;
-  const requiredDistForSpan = (minHorizontalSpan * 0.5) / Math.max(hFovTan, 0.22);
+  const requiredDistForSpan = (minHorizontalSpan * 0.5) / Math.max(hFovTan, 0.15);
 
   const effectiveDist = Math.max(baseDist, requiredDistForSpan);
   const distRatio = effectiveDist / Math.max(baseDist, 0.001);

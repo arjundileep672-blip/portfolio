@@ -36,6 +36,23 @@ export interface SkillsUniverseProps extends SceneBaseProps {
   onSelectSkill?: (skill: import('@/data/skills').Skill | null) => void;
 }
 
+export type SatelliteSensorMode = 'optical' | 'sar' | 'split';
+
+export interface SatelliteLabInspectItem {
+  kind: 'region' | 'satellite' | 'agent' | 'evidence';
+  id: string;
+  title: string;
+  subtitle: string;
+  coords?: string;
+  detail: string;
+  metrics?: { label: string; value: string }[];
+}
+
+export interface SatelliteLabProps extends SceneBaseProps {
+  project: import('@/data/projects').Project;
+  onSelectItem?: (item: SatelliteLabInspectItem | null) => void;
+}
+
 export interface NeuronInfo {
   layerIndex: number;
   layerName: string;

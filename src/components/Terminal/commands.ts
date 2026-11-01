@@ -58,19 +58,16 @@ export const commands: Record<string, CommandDef> = {
   projects: {
     description: 'Show projects',
     run: () =>
-      projects.length
-        ? projects.flatMap((p) => [
-            L(`${p.index}  ${p.title}  [${p.status}]`, 'accent'),
-            L(`    ${p.summary}`),
-            L(`    stack: ${p.stack.join(', ')}`, 'muted'),
-            ...(p.links.demo.href ? [L(`    demo:  ${p.links.demo.href}`, 'out', p.links.demo.href)] : []),
-          ])
-        : [
-            L('01  Research Paper Reproductions  [studying]', 'accent'),
-            L('    Recreating implementations of published AI/ML papers (starting with ResNet).'),
-            L('02  Experiments Queue  [in-progress]', 'accent'),
-            L('    New projects appear here as they are built. Edit src/data/projects.ts to add entries.', 'muted'),
-          ],
+      projects.flatMap((p) => [
+        L(`${p.index}  ${p.title}  [${p.status}]${p.context ? ` · ${p.context}` : ''}`, 'accent'),
+        ...(p.headline ? [L(`    "${p.headline}"`)] : []),
+        L(`    ${p.summary}`),
+        ...(p.architecturePipeline
+          ? [L(`    pipeline: ${p.architecturePipeline.join(' → ')}`, 'muted')]
+          : []),
+        L(`    stack: ${p.stack.join(', ')}`, 'muted'),
+        ...(p.links.demo.href ? [L(`    demo:  ${p.links.demo.href}`, 'out', p.links.demo.href)] : []),
+      ]),
   },
   research: {
     description: 'Show research entries',

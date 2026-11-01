@@ -25,7 +25,6 @@ export const milestones: Milestone[] = [
   { id: 'prog', category: 'Programming', title: 'Learning to program', description: 'C and C++ fundamentals, then Python and JavaScript.', period: null, state: 'done' },
   { id: 'dsa', category: 'Data Structures & Algorithms', title: 'Problem solving', description: 'Studying data structures and algorithms to think in terms of complexity and trade-offs.', period: null, state: 'now' },
   { id: 'swe', category: 'Software Engineering', title: 'Building for the web', description: 'Frontend with HTML, CSS, React and Tailwind; backends with Node.js, Express and PostgreSQL.', period: null, state: 'done' },
-  { id: 'product', category: 'Product Development', title: 'ChainHandler', description: 'Designed and shipped a supply chain resilience platform with a live deployment.', period: null, state: 'done' },
   { id: 'agentic', category: 'Agentic AI', title: 'Agentic systems', description: 'Exploring LLM-driven agents that plan and act with tools.', period: null, state: 'now' },
   { id: 'ml', category: 'AI & Machine Learning', title: 'Machine & deep learning', description: 'Building intuition for models, training and the mathematics behind them.', period: null, state: 'now' },
   { id: 'research', category: 'Research Implementations', title: 'Reproducing ResNet', description: 'Studying Deep Residual Learning with the goal of implementing it from scratch.', period: null, state: 'now' },

@@ -36,18 +36,6 @@ export interface SkillsUniverseProps extends SceneBaseProps {
   onSelectSkill?: (skill: import('@/data/skills').Skill | null) => void;
 }
 
-export interface ProjectLabItem {
-  type: 'rack' | 'inventory' | 'shipment' | 'node' | 'building';
-  id: string;
-  label: string;
-  detail: string;
-}
-
-export interface ProjectLabProps extends SceneBaseProps {
-  project: import('@/data/projects').Project;
-  onSelectItem?: (item: ProjectLabItem | null) => void;
-}
-
 export interface NeuronInfo {
   layerIndex: number;
   layerName: string;

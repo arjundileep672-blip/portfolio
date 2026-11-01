@@ -45,13 +45,13 @@ export const skillCategories: SkillCategory[] = [
     id: 'backend', label: 'Backend', color: '#9FD4FF',
     skills: [
       s('node', 'Node.js', 'backend', 'Server-side JavaScript runtime used to build APIs and services.', ['express', 'javascript']),
-      s('express', 'Express.js', 'backend', 'Minimal web framework for REST APIs — used in ChainHandler.', ['node', 'postgres']),
+      s('express', 'Express.js', 'backend', 'Minimal web framework for building REST APIs and backend services.', ['node', 'postgres']),
     ],
   },
   {
     id: 'database', label: 'Database', color: '#FFB86B',
     skills: [
-      s('postgres', 'PostgreSQL', 'database', 'Relational data modelling and SQL — used with Neon in ChainHandler.', ['express']),
+      s('postgres', 'PostgreSQL', 'database', 'Relational data modelling and SQL.', ['express']),
     ],
   },
   {
@@ -60,7 +60,7 @@ export const skillCategories: SkillCategory[] = [
       s('ml', 'Machine Learning', 'ai', 'Learning from data: models, training, evaluation and the maths behind them.', ['python', 'dl']),
       s('dl', 'Deep Learning', 'ai', 'Neural network architectures — currently studying residual networks (ResNet).', ['ml', 'research']),
       s('llm', 'Large Language Models', 'ai', 'How transformer-based language models work and how to build with them.', ['dl', 'agentic']),
-      s('agentic', 'Agentic AI', 'ai', 'Systems where models plan and act with tools — the idea behind ChainHandler.', ['llm']),
+      s('agentic', 'Agentic AI', 'ai', 'Systems where models plan, reason and act autonomously with tools.', ['llm']),
       s('research', 'Research Paper Implementation', 'ai', 'Reading published papers and reproducing their ideas in code.', ['dl', 'python']),
     ],
   },

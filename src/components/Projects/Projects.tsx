@@ -1,12 +1,7 @@
-import { lazy } from 'react';
 import { ArrowUpRight, Lock, Plus } from 'lucide-react';
 import { Magnetic, Reveal, SectionTag, SplitReveal } from '@/components/ui/Motion';
-import { SceneFrame } from '@/components/SceneFrame/SceneFrame';
 import { experimentalProjects, projects, type Project, type ProjectStatus } from '@/data/projects';
 import { useUnbound } from '@/context/UnboundContext';
-import type { ProjectLabProps } from '@/scenes/types';
-
-const ProjectLab = lazy(() => import('@/scenes/ProjectLab'));
 
 const statusLabel: Record<ProjectStatus, string> = { live: 'Live', 'in-progress': 'In progress', planned: 'Planned', idea: 'Idea' };
 
@@ -79,32 +74,6 @@ function FeaturedProject({ p }: { p: Project }) {
           </ul>
         </div>
       </div>
-
-      {p.scene === 'warehouse' && (
-        <div className="section-pad mt-12">
-          <div className="mb-4 flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <p className="ub-label text-acid">Scene three — project lab</p>
-              <p className="mt-2 max-w-xl text-[15px] text-bone/70">
-                A procedural model of the problem ChainHandler solves: warehouses, racks, inventory and shipments moving
-                between nodes. Click anything to inspect it. Values shown inside are simulated for illustration.
-              </p>
-            </div>
-          </div>
-          <SceneFrame<ProjectLabProps>
-            scene={ProjectLab}
-            sceneProps={{ project: p }}
-            label="ChainHandler project lab"
-            description="An interactive 3D warehouse with storage racks, inventory boxes, connected warehouse nodes and moving shipment markers, illustrating the ChainHandler supply chain platform."
-            fallback={
-              <div className="absolute inset-0 flex items-center justify-center p-8 text-center">
-                <p className="max-w-md text-bone/70">3D warehouse unavailable on this device. ChainHandler models inventory across connected warehouses and tracks shipments between them — try the live demo.</p>
-              </div>
-            }
-            className="h-[80svh] min-h-[560px] border border-line bg-ink"
-          />
-        </div>
-      )}
     </article>
   );
 }
@@ -115,15 +84,17 @@ export function Projects() {
     <section id="projects" aria-labelledby="projects-title" className="relative border-t border-line py-24 outline-none sm:py-32">
       <div className="section-pad">
         <SectionTag index="03" label="Selected work" />
-        <SplitReveal id="projects-title" text="Things I've built." className="display-lg mt-10" />
+        <SplitReveal id="projects-title" text="Things I'm building." className="display-lg mt-10" />
       </div>
 
-      <div className="mt-16">
-        {projects.map((p) => <FeaturedProject key={p.id} p={p} />)}
-      </div>
+      {projects.length > 0 && (
+        <div className="mt-16 space-y-24">
+          {projects.map((p) => <FeaturedProject key={p.id} p={p} />)}
+        </div>
+      )}
 
-      {/* P/02 — research reproductions pointer */}
-      <div className="section-pad mt-24 grid gap-px border-y border-line bg-line lg:grid-cols-2">
+      {/* Research reproductions & Experiments queue */}
+      <div className="section-pad mt-16 grid gap-px border-y border-line bg-line lg:grid-cols-2">
         <button
           type="button"
           onClick={() => scrollTo('research')}
@@ -131,7 +102,7 @@ export function Projects() {
           data-cursor="Research"
         >
           <div className="flex items-center gap-4">
-            <span className="font-mono text-sm text-acid">P/02</span>
+            <span className="font-mono text-sm text-acid">P/01</span>
             <span className="ub-label">AI / Machine Learning / Research</span>
           </div>
           <h3 className="mt-6 font-display text-3xl font-bold tracking-[-0.03em] sm:text-5xl">Research paper reproductions</h3>
@@ -146,7 +117,7 @@ export function Projects() {
 
         <div className="bg-ink py-10 lg:pl-10">
           <div className="flex items-center gap-4">
-            <span className="font-mono text-sm text-acid">P/03</span>
+            <span className="font-mono text-sm text-acid">P/02</span>
             <span className="ub-label">Experimental projects</span>
           </div>
           <h3 className="mt-6 font-display text-3xl font-bold tracking-[-0.03em] sm:text-5xl">Experiments queue</h3>
@@ -154,7 +125,7 @@ export function Projects() {
             <div className="mt-6 flex items-start gap-4 border border-dashed border-line p-5">
               <Plus size={16} className="mt-0.5 shrink-0 text-muted" aria-hidden />
               <p className="text-[15px] leading-relaxed text-muted">
-                Reserved for what comes next. New experiments appear here as they're built — nothing is listed until it's real.
+                Reserved for what comes next. Add projects in <code className="font-mono text-bone">src/data/projects.ts</code> as they are built — nothing is listed until it's real.
               </p>
             </div>
           ) : (

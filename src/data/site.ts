@@ -18,9 +18,8 @@ export const site = {
   intro: 'An independent digital space exploring software engineering, artificial intelligence, and experimental technology.',
   status: 'Open to learning, building & collaborating',
   socials: [
-    // EDIT: replace null with real values.
-    { id: 'email', label: 'Email', value: null },
-    { id: 'github', label: 'GitHub', value: null },
+    { id: 'email', label: 'Email', value: 'arjundileep672@gmail.com' },
+    { id: 'github', label: 'GitHub', value: 'https://github.com/arjundileep672-blip' },
     { id: 'linkedin', label: 'LinkedIn', value: null },
   ] as SocialLink[],
 };

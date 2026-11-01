@@ -91,7 +91,7 @@ export const notebook: NotebookNote[] = [
     id: 'agents',
     kind: 'concept',
     title: 'Agentic systems',
-    body: 'An agent loops: observe → plan → act with tools → observe again. ChainHandler explores applying this loop to supply chain disruptions.',
+    body: 'An agent loops: observe → plan → act with tools → observe again. Exploring how autonomous reasoning loops can solve multi-step engineering problems.',
   },
   {
     id: 'reproduce',

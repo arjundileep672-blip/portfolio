@@ -90,10 +90,10 @@ export function Terminal() {
     <section id="terminal" aria-labelledby="terminal-title" className="relative border-t border-line section-pad py-24 outline-none sm:py-32">
       <div className="grid gap-12 lg:grid-cols-12">
         <div className="lg:col-span-4">
-          <SectionTag index="07" label="System terminal" />
-          <SplitReveal id="terminal-title" text="Talk to the machine." className="display-md mt-10 max-w-[12ch]" />
-          <p className="mt-6 max-w-sm text-[15px] leading-relaxed text-bone/70">
-            A real command parser — not an illustration. Type a command, press Enter. History lives on ↑ / ↓.
+          <SectionTag index="07" label="Console" />
+          <SplitReveal id="terminal-title" text="Direct interface." className="display-md mt-10 max-w-[12ch]" />
+          <p className="mt-5 max-w-xs text-[14px] leading-relaxed text-bone/65">
+            Interactive shell with live command execution, tab completion, and history.
           </p>
           <div className="mt-8 flex flex-wrap gap-2" aria-label="Quick commands">
             {quick.map((q) => (

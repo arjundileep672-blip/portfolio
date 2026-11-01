@@ -9,12 +9,11 @@ export function Experiments() {
   return (
     <section id="experiments" aria-labelledby="experiments-title" className="relative border-t border-line py-24 outline-none sm:py-32">
       <div className="section-pad">
-        <SectionTag index="05" label="Experiments — scene five" />
+        <SectionTag index="05" label="Shader & Geometry Lab" />
         <div className="mt-10 grid gap-8 lg:grid-cols-12 lg:items-end">
-          <SplitReveal id="experiments-title" text="A playground for procedural things." className="display-lg lg:col-span-8" />
-          <p className="text-[15px] leading-relaxed text-bone/70 lg:col-span-4">
-            A creative-coding sandbox. Swap geometry, materials and lighting, bend the surface with noise, and spin it up.
-            Every control talks directly to the GPU.
+          <SplitReveal id="experiments-title" text="Procedural synthesis." className="display-lg lg:col-span-8" />
+          <p className="text-[14px] leading-relaxed text-bone/65 lg:col-span-4">
+            Real-time geometry, material, and noise synthesis running directly on the GPU.
           </p>
         </div>
       </div>

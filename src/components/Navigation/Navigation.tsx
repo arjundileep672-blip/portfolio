@@ -41,8 +41,8 @@ export function Navigation() {
     >
       <nav
         aria-label="Primary"
-        className={`mx-auto flex h-12 items-center justify-between gap-4 border px-3 transition-colors duration-500 sm:px-4 ${
-          scrolled ? 'border-line bg-ink/85 backdrop-blur-md' : 'border-transparent bg-transparent'
+        className={`mx-auto flex h-12 items-center justify-between gap-4 border px-3 transition-all duration-500 sm:px-4 ${
+          scrolled ? 'border-line bg-ink/85 backdrop-blur-md' : 'border-line/40 bg-ink/55 backdrop-blur-md'
         }`}
       >
         <a

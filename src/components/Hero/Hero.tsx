@@ -21,7 +21,7 @@ function HeroFallback() {
   );
 }
 
-/** Live pointer readout — small cursor-responsive technical detail. */
+/** Live pointer readout — minimal technical telemetry detail. */
 function PointerReadout() {
   const ref = useRef<HTMLSpanElement>(null);
   useEffect(() => {
@@ -29,12 +29,12 @@ function PointerReadout() {
       if (!ref.current) return;
       const x = (e.clientX / innerWidth) * 2 - 1;
       const y = -((e.clientY / innerHeight) * 2 - 1);
-      ref.current.textContent = `X ${x >= 0 ? '+' : ''}${x.toFixed(3)}  Y ${y >= 0 ? '+' : ''}${y.toFixed(3)}`;
+      ref.current.textContent = `${x >= 0 ? '+' : ''}${x.toFixed(2)} / ${y >= 0 ? '+' : ''}${y.toFixed(2)}`;
     };
     window.addEventListener('pointermove', on, { passive: true });
     return () => window.removeEventListener('pointermove', on);
   }, []);
-  return <span ref={ref} className="tabular-nums">X +0.000  Y +0.000</span>;
+  return <span ref={ref} className="tabular-nums">+0.00 / +0.00</span>;
 }
 
 export function Hero() {
@@ -44,7 +44,7 @@ export function Hero() {
   const { scrollYProgress } = useScroll({ target: root, offset: ['start start', 'end start'] });
   const textY = useTransform(scrollYProgress, [0, 1], ['0%', '-35%']);
   const fade = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
-  const sceneScale = useTransform(scrollYProgress, [0, 1], [1, 0.86]);
+  const sceneScale = useTransform(scrollYProgress, [0, 1], [1, 0.88]);
 
   useEffect(() => {
     if (!loaded || !root.current) return;
@@ -58,104 +58,166 @@ export function Hero() {
     return () => ctx.revert();
   }, [loaded]);
 
-  const onInteract = (t: HeroInteraction) => setLastAction(t === 'transform' ? 'TRANSFORM' : t === 'reset' ? 'RESET' : 'UNLEASHED');
+  const onInteract = (t: HeroInteraction) =>
+    setLastAction(t === 'transform' ? 'MORPH' : t === 'reset' ? 'RESET' : 'OVERDRIVE');
 
   return (
-    <section id="home" ref={root} aria-labelledby="hero-title" className="relative min-h-[100svh] overflow-hidden bg-ink outline-none lg:h-[100svh] lg:min-h-[640px]">
-      <div className="grid-lines pointer-events-none absolute inset-0 opacity-40 [mask-image:radial-gradient(ellipse_at_center,black_20%,transparent_75%)]" aria-hidden />
+    <section
+      id="home"
+      ref={root}
+      aria-labelledby="hero-title"
+      className="relative min-h-[100svh] overflow-hidden bg-ink outline-none lg:h-[100svh] lg:min-h-[640px]"
+    >
+      {/* Subtle architectural grid + atmospheric backlight glow behind sculpture */}
+      <div
+        className="grid-lines pointer-events-none absolute inset-0 opacity-30 [mask-image:radial-gradient(ellipse_at_center,black_15%,transparent_70%)]"
+        aria-hidden
+      />
+      <div
+        className="pointer-events-none absolute right-[4%] top-1/2 h-[54vmin] w-[54vmin] -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(197,255,85,0.11)_0%,rgba(159,212,255,0.05)_42%,transparent_72%)] blur-3xl"
+        aria-hidden
+      />
 
-      <motion.div className="absolute inset-0" style={{ scale: sceneScale }}>
+      {/* 3D Sculpture Canvas with top/bottom vignette mask so rings never collide with navbar */}
+      <motion.div
+        className="absolute inset-0 [mask-image:linear-gradient(to_bottom,transparent_0%,black_11%,black_90%,transparent_100%)]"
+        style={{ scale: sceneScale }}
+      >
         <SceneFrame<HeroSceneProps>
           scene={HeroScene}
           sceneProps={{ resetSignal: heroResetSignal, secretSignal, onInteract }}
           label="Hero sculpture"
-          description="A procedural metallic sculpture that deforms with your pointer. Drag to rotate, click it to transform, double-click to reset. Click once to enable scroll zoom."
+          description="A procedural liquid-chrome sculpture that deforms with your pointer. Drag to rotate, click it to transform, double-click to reset."
           fallback={<HeroFallback />}
           className="h-full w-full"
           hint={false}
         />
       </motion.div>
 
-      {/* Overlay typography — pointer-events pass through to the canvas except on controls */}
-      <motion.div style={{ y: textY, opacity: fade }} className="pointer-events-none relative z-10 flex min-h-[100svh] flex-col justify-between section-pad pb-6 pt-20 sm:pb-8 sm:pt-28 lg:h-full">
-        <div className="flex items-start justify-between gap-4">
-          <div data-hero="fade" className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.16em] text-muted sm:text-[11px] sm:tracking-[0.18em]">
+      {/* Editorial Overlay Typography */}
+      <motion.div
+        style={{ y: textY, opacity: fade }}
+        className="pointer-events-none relative z-10 flex min-h-[100svh] flex-col justify-between section-pad pb-6 pt-20 sm:pb-8 sm:pt-24 lg:h-full"
+      >
+        {/* Minimal Top Status & Telemetry Row */}
+        <div className="flex items-center justify-between gap-4">
+          <div
+            data-hero="fade"
+            className="inline-flex items-center gap-2.5 border border-line/70 bg-ink/60 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-bone/80 backdrop-blur-md"
+          >
             <span className="h-1.5 w-1.5 shrink-0 animate-pulseDot rounded-full bg-acid" aria-hidden />
-            <span className="line-clamp-1">{site.status}</span>
+            <span>{site.status}</span>
           </div>
-          <div data-hero="fade" className="hidden text-right font-mono text-[10px] uppercase leading-relaxed tracking-[0.18em] text-muted md:block" aria-hidden>
-            <div>SYS/ARJUN v1.0</div>
+          <div
+            data-hero="fade"
+            className="hidden items-center gap-4 font-mono text-[10px] uppercase tracking-[0.18em] text-muted md:flex"
+            aria-hidden
+          >
             <PointerReadout />
-            <div>STATE <span className="text-acid">{lastAction}</span></div>
+            <span className="text-line">/</span>
+            <span>
+              SYS <span className="text-acid">{lastAction}</span>
+            </span>
           </div>
         </div>
 
+        {/* Center/Bottom Hero Composition */}
         <div className="mt-12 sm:mt-0">
-          <p data-hero="fade" className="ub-label mb-3 max-w-[36ch] sm:mb-6">
-            AI/ML Engineering &nbsp;·&nbsp; Software Engineering &nbsp;·&nbsp; Research
+          <p data-hero="fade" className="ub-label mb-3 tracking-[0.24em] text-bone/70 sm:mb-4">
+            {site.creator} &nbsp;—&nbsp; AI/ML &amp; Software Engineering
           </p>
-          <h1 id="hero-title" className="display-xl select-none" aria-label="ARJUN">
+
+          <h1
+            id="hero-title"
+            className="display-xl select-none drop-shadow-[0_12px_40px_rgba(8,10,8,0.85)]"
+            aria-label="ARJUN"
+          >
             <span className="flex overflow-hidden" aria-hidden>
               {'ARJUN'.split('').map((c, i) => (
-                <span key={i} data-hero="char" className={`inline-block ${i === 2 ? 'text-acid' : ''}`}>{c}</span>
+                <span
+                  key={i}
+                  data-hero="char"
+                  className={`inline-block ${i === 2 ? 'text-acid drop-shadow-[0_0_28px_rgba(197,255,85,0.25)]' : ''}`}
+                >
+                  {c}
+                </span>
               ))}
             </span>
           </h1>
-          <div data-hero="rule" className="my-4 h-px w-full bg-line sm:my-7" aria-hidden />
+
+          <div data-hero="rule" className="my-4 h-px w-full bg-gradient-to-r from-bone/30 via-line to-transparent sm:my-6" aria-hidden />
 
           <div className="grid gap-5 lg:grid-cols-12 lg:items-end lg:gap-6">
-            <div className="lg:col-span-5">
-              <p className="overflow-hidden font-display text-base font-medium uppercase leading-tight tracking-[-0.02em] sm:text-2xl">
-                <span data-hero="line" className="block">Think beyond.</span>
+            <div className="lg:col-span-6">
+              <p className="overflow-hidden font-display text-base font-medium uppercase leading-tight tracking-[-0.02em] text-bone sm:text-2xl">
+                <span data-hero="line" className="block">
+                  Think beyond. <span className="text-acid">Build without limits.</span>
+                </span>
               </p>
-              <p className="overflow-hidden font-display text-base font-medium uppercase leading-tight tracking-[-0.02em] text-acid sm:text-2xl">
-                <span data-hero="line" className="block">Build without limits.</span>
+              <p data-hero="fade" className="mt-2.5 max-w-md text-sm leading-relaxed text-bone/70 sm:text-[15px]">
+                {site.headline}
               </p>
-              <p data-hero="fade" className="mt-3 max-w-md text-sm leading-relaxed text-bone/75 sm:mt-4 sm:text-[15px]">
-                <span className="text-bone">{site.headline}</span> {site.intro}
-              </p>
-              <p data-hero="fade" className="ub-label mt-2.5 sm:mt-3">Created by {site.creator}.</p>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 lg:col-span-7 lg:justify-end">
+            <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 lg:col-span-6 lg:justify-end">
               <div data-hero="fade" className="pointer-events-auto w-full sm:w-auto">
-                <Magnetic onClick={() => scrollTo('projects')} cursor="Explore" className="group h-11 w-full justify-center gap-3 bg-acid px-5 font-mono text-xs font-medium uppercase tracking-[0.14em] text-ink sm:h-12 sm:w-auto">
-                  Explore my work <ArrowDown size={14} className="transition-transform group-hover:translate-y-0.5" aria-hidden />
+                <Magnetic
+                  onClick={() => scrollTo('projects')}
+                  cursor="Explore"
+                  className="group h-11 w-full justify-center gap-3 bg-acid px-5 font-mono text-xs font-medium uppercase tracking-[0.14em] text-ink shadow-[0_0_25px_rgba(197,255,85,0.22)] transition-shadow hover:shadow-[0_0_35px_rgba(197,255,85,0.4)] sm:h-12 sm:w-auto"
+                >
+                  Selected Work{' '}
+                  <ArrowDown size={14} className="transition-transform group-hover:translate-y-0.5" aria-hidden />
                 </Magnetic>
               </div>
               <div data-hero="fade" className="pointer-events-auto flex-1 sm:flex-initial">
-                <Magnetic onClick={() => scrollTo('contact')} cursor="Say hi" className="group h-11 w-full justify-center gap-3 border border-bone/30 px-4 font-mono text-xs uppercase tracking-[0.14em] hover:border-bone sm:h-12 sm:w-auto sm:px-5">
-                  Get in touch <ArrowUpRight size={14} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden />
+                <Magnetic
+                  onClick={() => scrollTo('contact')}
+                  cursor="Say hi"
+                  className="group h-11 w-full justify-center gap-3 border border-bone/25 bg-ink/70 px-4 font-mono text-xs uppercase tracking-[0.14em] backdrop-blur-md hover:border-bone sm:h-12 sm:w-auto sm:px-5"
+                >
+                  Contact{' '}
+                  <ArrowUpRight
+                    size={14}
+                    className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                    aria-hidden
+                  />
                 </Magnetic>
               </div>
               <div data-hero="fade" className="pointer-events-auto">
-                <button type="button" onClick={resetHero} className="ub-btn h-11 px-3 sm:h-12" aria-label="Reset 3D camera" data-cursor="Reset">
-                  <RotateCcw size={13} aria-hidden /> <span className="hidden xs:inline sm:inline">Reset camera</span>
+                <button
+                  type="button"
+                  onClick={resetHero}
+                  className="ub-btn h-11 bg-ink/70 px-3 backdrop-blur-md sm:h-12"
+                  aria-label="Reset 3D camera"
+                  data-cursor="Reset"
+                >
+                  <RotateCcw size={13} aria-hidden />
                 </button>
               </div>
             </div>
           </div>
 
-          <div className="mt-6 flex items-center justify-between sm:mt-8">
+          <div className="mt-5 flex items-center justify-between sm:mt-7">
             <button
               type="button"
               data-hero="fade"
               onClick={() => scrollTo('about')}
-              className="pointer-events-auto group flex items-center gap-3 font-mono text-[11px] uppercase tracking-[0.18em] text-muted hover:text-bone"
+              className="pointer-events-auto group flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.2em] text-muted hover:text-bone"
               aria-label="Scroll to About section"
             >
-              <span className="relative block h-9 w-[1px] overflow-hidden bg-line">
-                <span className="absolute left-0 top-0 h-3 w-full animate-[scrollcue_1.8s_ease-in-out_infinite] bg-acid" />
+              <span className="relative block h-7 w-[1px] overflow-hidden bg-line">
+                <span className="absolute left-0 top-0 h-2.5 w-full animate-[scrollcue_1.8s_ease-in-out_infinite] bg-acid" />
               </span>
               Scroll
             </button>
-            <p data-hero="fade" className="ub-label hidden text-right sm:block" aria-hidden>
-              Drag · Click · Double-click · Move
+
+            <p data-hero="fade" className="hidden font-mono text-[10px] uppercase tracking-[0.2em] text-muted/80 sm:block">
+              Drag · Click to Morph
             </p>
           </div>
         </div>
       </motion.div>
-      <style>{`@keyframes scrollcue{0%{transform:translateY(-100%)}100%{transform:translateY(300%)}}`}</style>
     </section>
   );
 }

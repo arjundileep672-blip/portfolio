@@ -32,7 +32,7 @@ export function Contact() {
   return (
     <section id="contact" aria-labelledby="contact-title" className="relative overflow-hidden border-t border-line section-pad py-24 outline-none sm:py-32 lg:py-40">
       <SectionTag index="08" label="Contact" />
-      <SplitReveal id="contact-title" text="Have an interesting problem? Let's build something." className="display-lg mt-10 max-w-[18ch]" />
+      <SplitReveal id="contact-title" text="Let's build something extraordinary." className="display-lg mt-10 max-w-[16ch]" />
 
       <div className="mt-14 flex flex-wrap items-center gap-3">
         {emailHref ? (

@@ -36,17 +36,16 @@ export function Skills() {
   return (
     <section id="skills" aria-labelledby="skills-title" className="relative border-t border-line py-24 outline-none sm:py-32">
       <div className="section-pad">
-        <SectionTag index="02" label="Skills — scene two" />
+        <SectionTag index="02" label="Stack" />
         <div className="mt-10 flex flex-col justify-between gap-8 lg:flex-row lg:items-end">
-          <SplitReveal id="skills-title" text="A universe of connected tools." className="display-lg max-w-[14ch]" />
+          <SplitReveal id="skills-title" text="Connected capabilities." className="display-lg max-w-[14ch]" />
           <div className="max-w-sm">
-            <p className="text-[15px] leading-relaxed text-bone/70">
-              Every node is a technology I use; every line is a real relationship between them. No percentages, no
-              made-up levels — just the map.
+            <p className="text-[14px] leading-relaxed text-bone/65">
+              Every node is a tool in active use; every edge maps a real dependency across AI, backend, and graphics.
             </p>
-            <div className="mt-6 flex gap-2" role="group" aria-label="Skills view">
-              <button type="button" className="ub-btn" aria-pressed={view === 'universe'} onClick={() => setView('universe')}>3D universe</button>
-              <button type="button" className="ub-btn" aria-pressed={view === 'list'} onClick={() => setView('list')}>Text list</button>
+            <div className="mt-5 flex gap-2" role="group" aria-label="Skills view">
+              <button type="button" className="ub-btn" aria-pressed={view === 'universe'} onClick={() => setView('universe')}>3D Constellation</button>
+              <button type="button" className="ub-btn" aria-pressed={view === 'list'} onClick={() => setView('list')}>Index</button>
             </div>
           </div>
         </div>

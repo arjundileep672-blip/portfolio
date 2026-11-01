@@ -149,11 +149,11 @@ export function Research() {
       <div className="section-pad mt-20">
         <div className="mb-4 flex flex-col justify-between gap-4 md:flex-row md:items-end">
           <div>
-            <p className="ub-label text-acid">Scene four — interactive neural network</p>
-            <h3 className="display-md mt-3 max-w-[20ch]">Signals through a residual network.</h3>
+            <p className="ub-label text-acid">04 // Residual Network Topology</p>
+            <h3 className="display-md mt-2 max-w-[20ch]">Forward pass &amp; skip connections.</h3>
           </div>
-          <p className="max-w-sm text-sm text-muted">
-            An educational, ResNet-inspired visualization — skip connections arc over layers. It is not a trained model running inference.
+          <p className="max-w-xs font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
+            Interactive ResNet-inspired signal propagation
           </p>
         </div>
         <SceneFrame<NeuralNetworkProps>

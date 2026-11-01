@@ -180,16 +180,16 @@ export default function HeroScene({
         <CameraRig engaged={effectiveEngaged} resetCounter={resetCounter} />
       </Canvas>
 
-      {/* Accessible Interactive Morph Mode + Touch 3D Spin Pill */}
-      <div className="pointer-events-auto absolute right-4 top-20 z-20 flex flex-wrap items-center justify-end gap-1.5 sm:right-8 sm:top-20 lg:right-14 lg:top-1/2 lg:-translate-y-1/2 lg:flex-col lg:items-end">
+      {/* Subtle Docked Morph Mode Pill (top-right below HUD, never overlapping the sculpture center) */}
+      <div className="pointer-events-auto absolute right-4 top-20 z-20 flex flex-wrap items-center justify-end gap-1.5 sm:right-8 sm:top-28 lg:right-14 lg:top-32">
         <button
           type="button"
           onClick={handleTransform}
-          className="ub-btn min-h-[40px] bg-ink/85 px-2.5 py-1 text-[10px] backdrop-blur-sm sm:min-h-[36px] sm:px-3 sm:text-[11px]"
+          className="ub-btn min-h-[38px] border-line/80 bg-ink/75 px-3 py-1 text-[10px] text-bone/90 backdrop-blur-md transition-all hover:border-acid/60 hover:text-acid sm:min-h-[34px]"
           title="Click or tap to transform 3D sculpture geometry"
           aria-label={`Sculpture state ${currentMorph.code} ${currentMorph.name}. Activate to transform.`}
         >
-          <Sparkles size={12} className="text-acid" aria-hidden />
+          <Sparkles size={11} className="text-acid" aria-hidden />
           <span>
             {secretActive ? 'OVERDRIVE // UNLEASHED' : `${currentMorph.code} // ${currentMorph.name}`}
           </span>
@@ -200,11 +200,11 @@ export default function HeroScene({
             type="button"
             onClick={() => setTouchSpinEnabled((v) => !v)}
             aria-pressed={touchSpinEnabled}
-            className="ub-btn min-h-[40px] bg-ink/85 px-2.5 py-1 text-[10px] backdrop-blur-sm"
+            className="ub-btn min-h-[38px] border-line/80 bg-ink/75 px-2.5 py-1 text-[10px] backdrop-blur-md"
             aria-label={touchSpinEnabled ? 'Lock 3D sculpture and resume page scroll' : 'Unlock touch rotation and zoom for 3D sculpture'}
           >
-            <Hand size={12} className="text-acid" aria-hidden />
-            <span>{touchSpinEnabled ? 'Done 3D · Scroll' : 'Spin 3D'}</span>
+            <Hand size={11} className="text-acid" aria-hidden />
+            <span>{touchSpinEnabled ? 'Done 3D' : 'Spin 3D'}</span>
           </button>
         )}
       </div>

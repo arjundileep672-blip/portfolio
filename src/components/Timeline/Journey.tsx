@@ -13,11 +13,11 @@ export function Journey() {
 
   return (
     <section id="journey" aria-labelledby="journey-title" className="relative border-t border-line section-pad py-24 outline-none sm:py-32">
-      <SectionTag index="06" label="Engineering journey" />
+      <SectionTag index="06" label="Trajectory" />
       <div className="mt-10 grid gap-8 lg:grid-cols-12 lg:items-end">
-        <SplitReveal id="journey-title" text="The path so far — and next." className="display-lg lg:col-span-7" />
-        <p className="text-[15px] leading-relaxed text-bone/70 lg:col-span-5">
-          A learning progression rather than a dated résumé. Milestones without verified dates stay undated.
+        <SplitReveal id="journey-title" text="Progression." className="display-lg lg:col-span-7" />
+        <p className="text-[14px] leading-relaxed text-bone/65 lg:col-span-5">
+          Foundations, active research, and upcoming engineering milestones.
         </p>
       </div>
 

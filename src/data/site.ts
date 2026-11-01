@@ -12,11 +12,11 @@ export interface SocialLink {
 export const site = {
   brand: 'ARJUN',
   creator: 'Arjun Dileep',
-  role: 'Aspiring AI/ML Engineer · Software Engineer',
+  role: 'AI / ML & Systems Engineering',
   tagline: 'THINK BEYOND. BUILD WITHOUT LIMITS.',
-  headline: 'Engineering ideas into intelligent systems.',
-  intro: 'An independent digital space exploring software engineering, artificial intelligence, and experimental technology.',
-  status: 'Open to learning, building & collaborating',
+  headline: 'Engineering intelligence into form.',
+  intro: 'Software engineering, deep learning & spatial computing.',
+  status: 'Available for select collaborations',
   socials: [
     { id: 'email', label: 'Email', value: 'arjundileep672@gmail.com' },
     { id: 'github', label: 'GitHub', value: 'https://github.com/arjundileep672-blip' },

@@ -119,27 +119,27 @@ export function HeroSculpture({
   }, [particleCount]);
 
   // Responsive spatial composition:
-  // - Wide desktop: shift sculpture right so left headline & copy have calm negative space
+  // - Wide desktop: shift sculpture further right with refined scale so "ARJUN" and the sculpture breathe cleanly
   // - Portrait mobile/tablet: elevate sculpture into upper-center/right zone above headline
   // - Compact landscape: shift right with balanced scale
   const isPortrait = viewport.aspect < 0.95;
   const targetOffsetX =
     viewport.width > 7.2
-      ? Math.min(viewport.width * 0.19, 1.65)
+      ? Math.min(viewport.width * 0.24, 1.95)
       : isPortrait
-      ? Math.min(viewport.width * 0.05, 0.22)
-      : Math.min(viewport.width * 0.16, 1.05);
+      ? Math.min(viewport.width * 0.06, 0.25)
+      : Math.min(viewport.width * 0.18, 1.2);
   const targetOffsetY =
     viewport.width > 7.2
-      ? 0.08
+      ? 0.05
       : isPortrait
-      ? Math.min(viewport.height * 0.09, 0.52)
-      : 0.12;
+      ? Math.min(viewport.height * 0.09, 0.5)
+      : 0.08;
   const baseScale = isPortrait
-    ? THREE.MathUtils.clamp(viewport.width * 0.23, 0.68, 0.88)
+    ? THREE.MathUtils.clamp(viewport.width * 0.21, 0.64, 0.82)
     : viewport.width < 7.2
-    ? 0.84
-    : 1.04;
+    ? 0.78
+    : 0.92;
 
   useFrame((state, delta) => {
     const dt = Math.min(delta, 0.05);
@@ -304,41 +304,40 @@ export function HeroSculpture({
         />
       </mesh>
 
-      {/* Outer Precision Geodesic Wireframe Lattice */}
+      {/* Subtle Geodesic Halo Lattice (only visible on morph/secret pulse so surface stays sleek) */}
       <mesh ref={wireCageRef} geometry={cageGeo} raycast={() => null}>
         <meshBasicMaterial
           color="#C5FF55"
           wireframe
           transparent
-          opacity={secretActive ? 0.32 : 0.11}
+          opacity={secretActive ? 0.22 : 0.035}
         />
       </mesh>
 
-      {/* Gyroscopic Orbital Ring A (Acid Accent) */}
+      {/* Gyroscopic Orbital Ring A (Tighter radius so it never intersects the top navbar) */}
       <group ref={outerRingARef} rotation={[0.65, 0.2, 0]}>
         <mesh raycast={() => null}>
-          <torusGeometry args={[1.82, 0.006, 12, quality === 'low' ? 64 : 120]} />
-          <meshBasicMaterial color="#C5FF55" transparent opacity={0.45} />
+          <torusGeometry args={[1.56, 0.0045, 12, quality === 'low' ? 64 : 120]} />
+          <meshBasicMaterial color="#C5FF55" transparent opacity={0.32} />
         </mesh>
-        {/* Orbital telemetry nodes on Ring A */}
-        <mesh position={[1.82, 0, 0]} raycast={() => null}>
-          <sphereGeometry args={[0.032, 12, 12]} />
+        <mesh position={[1.56, 0, 0]} raycast={() => null}>
+          <sphereGeometry args={[0.026, 12, 12]} />
           <meshBasicMaterial color="#C5FF55" />
         </mesh>
-        <mesh position={[-1.82, 0, 0]} raycast={() => null}>
-          <sphereGeometry args={[0.024, 12, 12]} />
+        <mesh position={[-1.56, 0, 0]} raycast={() => null}>
+          <sphereGeometry args={[0.02, 12, 12]} />
           <meshBasicMaterial color="#F2F2EA" />
         </mesh>
       </group>
 
-      {/* Gyroscopic Orbital Ring B (Bone Architectural Ring) */}
+      {/* Gyroscopic Orbital Ring B (Architectural Ring) */}
       <group ref={outerRingBRef} rotation={[-0.45, 0.5, -0.5]}>
         <mesh raycast={() => null}>
-          <torusGeometry args={[2.12, 0.004, 8, quality === 'low' ? 64 : 120]} />
-          <meshBasicMaterial color="#F2F2EA" transparent opacity={0.22} />
+          <torusGeometry args={[1.76, 0.0035, 8, quality === 'low' ? 64 : 120]} />
+          <meshBasicMaterial color="#F2F2EA" transparent opacity={0.14} />
         </mesh>
-        <mesh position={[0, 2.12, 0]} raycast={() => null}>
-          <boxGeometry args={[0.045, 0.045, 0.045]} />
+        <mesh position={[0, 1.76, 0]} raycast={() => null}>
+          <boxGeometry args={[0.036, 0.036, 0.036]} />
           <meshBasicMaterial color="#C5FF55" />
         </mesh>
       </group>

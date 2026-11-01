@@ -250,16 +250,14 @@ function FeaturedProject({ p }: { p: Project }) {
           <div className="mb-4 flex flex-col justify-between gap-4 md:flex-row md:items-end">
             <div>
               <p className="ub-label text-acid">
-                Scene three — interactive 3D satellite intelligence lab
+                03 // Orbital Telemetry &amp; VQA Simulation
               </p>
               <h4 className="display-md mt-2">
-                Orbital observation, SAR vs. Optical &amp; multi-agent VQA.
+                Optical vs. SAR &amp; 10-stage agent pipeline.
               </h4>
             </div>
-            <p className="max-w-md text-xs leading-relaxed text-muted">
-              Rotate the procedural Earth, click orbiting satellites or geographic ROI pins, switch
-              between simulated Optical and SAR radar modes, and inspect the 10-stage multi-agent
-              processing pipeline.
+            <p className="max-w-xs font-mono text-[11px] uppercase tracking-[0.14em] leading-relaxed text-muted">
+              Select satellites or ROI pins · Toggle Optical / SAR · Inspect agent stages
             </p>
           </div>
 
@@ -302,7 +300,7 @@ export function Projects() {
     >
       <div className="section-pad">
         <SectionTag index="03" label="Selected work" />
-        <SplitReveal id="projects-title" text="Things I'm building." className="display-lg mt-10" />
+        <SplitReveal id="projects-title" text="Engineered systems." className="display-lg mt-10" />
       </div>
 
       <div className="mt-16 space-y-24">

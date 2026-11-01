@@ -3,19 +3,19 @@ import { Reveal, SectionTag, SplitReveal } from '@/components/ui/Motion';
 import { site } from '@/data/site';
 
 const interests = [
-  { k: 'Artificial Intelligence', note: 'Systems that perceive, reason and act.' },
-  { k: 'Machine Learning', note: 'Learning patterns from data — and the maths underneath.' },
-  { k: 'Deep Learning', note: 'Architectures like ResNet; why depth works.' },
-  { k: 'Agentic AI', note: 'Models that plan and use tools to get things done.' },
-  { k: 'Software Engineering', note: 'Turning ideas into reliable, usable products.' },
-  { k: 'Experimental Technology', note: 'Building things just to see if they can exist — like this site.' },
+  { k: 'Artificial Intelligence', note: 'Perception, reasoning & autonomous action.' },
+  { k: 'Machine Learning', note: 'Statistical structure beneath high-dimensional data.' },
+  { k: 'Deep Learning', note: 'Residual architectures & representation depth.' },
+  { k: 'Agentic Systems', note: 'Multi-step planning, tool orchestration & VQA.' },
+  { k: 'Systems Engineering', note: 'Resilient, high-throughput software architecture.' },
+  { k: 'Spatial WebGL', note: 'Real-time shaders, physics & procedural geometry.' },
 ];
 
 const principles = [
-  ['Understand', 'How things work, from first principles.'],
-  ['Read', 'Research papers — then rebuild them.'],
-  ['Experiment', 'With new tools, models and ideas.'],
-  ['Ship', 'Ideas into practical applications.'],
+  ['First Principles', 'Deconstruct before building.'],
+  ['Reproduce', 'Read the paper. Write the math.'],
+  ['Prototype', 'Test hypotheses in code.'],
+  ['Ship', 'Precision in production.'],
 ];
 
 export function About() {
@@ -24,7 +24,7 @@ export function About() {
     <section id="about" aria-labelledby="about-title" className="relative border-t border-line section-pad py-24 outline-none sm:py-32 lg:py-40">
       <div className="grid gap-12 lg:grid-cols-12">
         <div className="lg:col-span-3">
-          <SectionTag index="01" label="About — the person behind ARJUN" />
+          <SectionTag index="01" label="Identity" />
           <Reveal delay={0.1} className="mt-10 hidden lg:block">
             <div className="font-display text-[9rem] font-black leading-none text-outline" aria-hidden>AD</div>
             <p className="ub-label mt-4">{site.creator}<br />{site.role}</p>
@@ -32,22 +32,19 @@ export function About() {
         </div>
 
         <div className="lg:col-span-9">
-          <SplitReveal id="about-title" text="Curiosity drives everything I build." as="h2" className="display-lg max-w-[16ch]" />
+          <SplitReveal id="about-title" text="Curiosity, engineered." as="h2" className="display-lg max-w-[14ch]" />
 
-          <div className="mt-14 grid gap-10 md:grid-cols-2 lg:mt-20">
+          <div className="mt-12 grid gap-10 md:grid-cols-2 lg:mt-16">
             <Reveal>
               <p className="text-xl leading-relaxed text-bone sm:text-2xl">
-                I'm <span className="text-acid">Arjun Dileep</span>, an engineering student passionate about software engineering,
-                artificial intelligence, machine learning, and solving real-world problems through technology.
+                I'm <span className="text-acid">Arjun Dileep</span> — building at the intersection of machine intelligence,
+                systems architecture, and interactive computation.
               </p>
             </Reveal>
-            <Reveal delay={0.1} className="space-y-5 text-[15px] leading-relaxed text-bone/70">
+            <Reveal delay={0.1} className="space-y-4 text-[15px] leading-relaxed text-bone/65">
               <p>
-                I enjoy understanding how things work, exploring research papers, experimenting with new technologies,
-                and transforming ideas into practical applications.
-              </p>
-              <p>
-                My goal is to become an engineer who builds meaningful technology — and eventually creates products of my own.
+                From reproducing foundational deep-learning papers to architecting multi-agent geospatial pipelines,
+                I focus on work where mathematics meets tangible software.
               </p>
             </Reveal>
           </div>
@@ -55,7 +52,7 @@ export function About() {
           {/* Interactive interest index */}
           <div className="mt-20 grid gap-8 border-t border-line pt-10 md:grid-cols-12">
             <div className="md:col-span-4">
-              <p className="ub-label">Fields of interest</p>
+              <p className="ub-label">Domains</p>
               <p className="mt-4 min-h-[3.5em] max-w-xs font-mono text-sm leading-relaxed text-acid" aria-live="polite">
                 → {interests[active].note}
               </p>

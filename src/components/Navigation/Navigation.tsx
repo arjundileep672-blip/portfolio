@@ -52,7 +52,7 @@ export function Navigation() {
           data-cursor="Home"
         >
           <span className="inline-block h-2 w-2 bg-acid transition-transform duration-500 group-hover:rotate-45" aria-hidden />
-          UNBOUND
+          ARJUN
         </a>
 
         <ul className="hidden items-center gap-1 lg:flex">

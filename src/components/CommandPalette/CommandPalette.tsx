@@ -141,7 +141,7 @@ export function CommandPalette() {
             </ul>
             <div className="flex justify-between border-t border-line px-4 py-2.5">
               <span className="ub-label">↑↓ navigate · ↵ run</span>
-              <span className="ub-label">UNBOUND/CMD</span>
+              <span className="ub-label">ARJUN/CMD</span>
             </div>
           </motion.div>
         </motion.div>

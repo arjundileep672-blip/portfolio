@@ -78,8 +78,8 @@ export function UnboundProvider({ children }: { children: ReactNode }) {
   const resetHero = useCallback(() => setHeroReset((n) => n + 1), []);
   const unleash = useCallback(() => {
     setSecret((n) => n + 1);
-    toast('UNBOUND // UNLEASHED — limits removed.');
-    console.log('%cUNBOUND // UNLEASHED', 'color:#C5FF55;font:700 14px monospace');
+    toast('ARJUN // UNLEASHED — limits removed.');
+    console.log('%cARJUN // UNLEASHED', 'color:#C5FF55;font:700 14px monospace');
   }, [toast]);
 
   const value = useMemo(

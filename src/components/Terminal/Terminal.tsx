@@ -11,7 +11,7 @@ const toneClass: Record<string, string> = {
 };
 
 const WELCOME: Line[] = [
-  { text: 'UNBOUND / SYSTEM TERMINAL — v1.0', tone: 'accent' },
+  { text: 'ARJUN / SYSTEM TERMINAL — v1.0', tone: 'accent' },
   { text: 'Type `help` to list commands. Try `whoami` or `neofetch`.', tone: 'muted' },
 ];
 
@@ -108,7 +108,7 @@ export function Terminal() {
               <div className="flex gap-1.5" aria-hidden>
                 <span className="h-2.5 w-2.5 bg-line" /><span className="h-2.5 w-2.5 bg-line" /><span className="h-2.5 w-2.5 bg-acid" />
               </div>
-              <span className="ub-label">UNBOUND / SYSTEM TERMINAL</span>
+              <span className="ub-label">ARJUN / SYSTEM TERMINAL</span>
               <span className="ub-label hidden sm:inline">tty1</span>
             </div>
             <div
@@ -122,13 +122,13 @@ export function Terminal() {
               {entries.map((en, idx) => (
                 <div key={en.id} className="mb-2">
                   {en.cmd !== undefined && (
-                    <div><span className="text-acid">arjun@unbound</span><span className="text-muted">:~$</span> <span className="text-bone">{en.cmd}</span></div>
+                    <div><span className="text-acid">arjun@system</span><span className="text-muted">:~$</span> <span className="text-bone">{en.cmd}</span></div>
                   )}
                   <TypedLines lines={en.lines} animate={!reduced && idx === entries.length - 1 && en.id !== 0} onDone={() => idx === entries.length - 1 && setBusy(false)} />
                 </div>
               ))}
               <div className="flex items-center">
-                <label htmlFor="terminal-input" className="shrink-0"><span className="text-acid">arjun@unbound</span><span className="text-muted">:~$</span>&nbsp;</label>
+                <label htmlFor="terminal-input" className="shrink-0"><span className="text-acid">arjun@system</span><span className="text-muted">:~$</span>&nbsp;</label>
                 <div className="relative flex-1">
                   <input
                     id="terminal-input"

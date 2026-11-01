@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useUnbound } from '@/context/UnboundContext';
 import { usePrefersReducedMotion } from '@/hooks/useDevice';
 
-const LETTERS = 'UNBOUND'.split('');
+const LETTERS = 'ARJUN'.split('');
 
 /** Tiny 2D particle field — cheap, no WebGL needed during load. */
 function Particles() {
@@ -71,7 +71,7 @@ export function Loader() {
           transition={{ duration: 0.9, ease: [0.76, 0, 0.24, 1] }}
           role="status"
           aria-live="polite"
-          aria-label={`Loading UNBOUND, ${progress} percent`}
+          aria-label={`Loading ARJUN, ${progress} percent`}
         >
           <Particles />
           <div className="relative flex overflow-hidden font-display text-[16vw] font-black leading-none tracking-tightest sm:text-[10vw]" aria-hidden>

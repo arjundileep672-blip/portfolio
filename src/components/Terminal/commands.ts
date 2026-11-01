@@ -43,7 +43,7 @@ export const commands: Record<string, CommandDef> = {
     ],
   },
   about: {
-    description: 'Who is behind UNBOUND',
+    description: 'Who is behind ARJUN',
     run: () => [
       L(`${site.creator} — ${site.role}`, 'accent'),
       L('Engineering student passionate about software engineering, AI, machine learning'),
@@ -89,18 +89,18 @@ export const commands: Record<string, CommandDef> = {
   },
   whoami: {
     description: 'Identify the operator',
-    run: () => [L('Arjun Dileep', 'accent'), L('Aspiring AI/ML Engineer'), L('Software Engineer in the making.'), L('Creator of UNBOUND.')],
+    run: () => [L('Arjun Dileep', 'accent'), L('Aspiring AI/ML Engineer'), L('Software Engineer in the making.'), L('Creator of ARJUN.')],
   },
   neofetch: {
     description: 'System information',
     run: () => {
       const info = [
-        ['', 'arjun@unbound'],
+        ['', 'arjun@system'],
         ['', '-------------'],
-        ['OS', 'UNBOUND v1.0 (web)'],
+        ['OS', 'ARJUN v1.0 (web)'],
         ['Host', site.creator],
         ['Role', 'AI/ML · Software Engineering'],
-        ['Shell', 'unbound-sh'],
+        ['Shell', 'arjun-sh'],
         ['Stack', 'React · Three.js · R3F · GSAP'],
         ['Focus', 'Agentic AI · Deep Learning'],
         ['Reading', research[0]?.shortTitle ?? '—'],
@@ -125,6 +125,17 @@ export const commands: Record<string, CommandDef> = {
   },
   clear: { description: 'Clear the terminal', run: () => 'clear' },
   // ——— hidden ———
+  arjun: {
+    description: 'Secret',
+    hidden: true,
+    run: (args, ctx) => {
+      if (args[0] === '--unleash') {
+        ctx.unleash();
+        return [L('>> removing limits…', 'accent'), L('>> scroll to the top. something changed.', 'accent')];
+      }
+      return [L('arjun: missing flag. Try a bolder one.', 'muted')];
+    },
+  },
   unbound: {
     description: 'Secret',
     hidden: true,
@@ -133,11 +144,11 @@ export const commands: Record<string, CommandDef> = {
         ctx.unleash();
         return [L('>> removing limits…', 'accent'), L('>> scroll to the top. something changed.', 'accent')];
       }
-      return [L('unbound: missing flag. Try a bolder one.', 'muted')];
+      return [L('arjun: missing flag. Try a bolder one.', 'muted')];
     },
   },
-  sudo: { description: 'Secret', hidden: true, run: () => [L('Nice try. In UNBOUND there are no limits — and no root either.', 'muted')] },
-  hello: { description: 'Secret', hidden: true, run: () => [L('Hello, curious one. Try `unbound --unleash`.', 'accent')] },
+  sudo: { description: 'Secret', hidden: true, run: () => [L('Nice try. In ARJUN there are no limits — and no root either.', 'muted')] },
+  hello: { description: 'Secret', hidden: true, run: () => [L('Hello, curious one. Try `arjun --unleash`.', 'accent')] },
 };
 
 export function execute(input: string, ctx: TerminalContext): CommandResult {

@@ -24,7 +24,7 @@ export function About() {
     <section id="about" aria-labelledby="about-title" className="relative border-t border-line section-pad py-24 outline-none sm:py-32 lg:py-40">
       <div className="grid gap-12 lg:grid-cols-12">
         <div className="lg:col-span-3">
-          <SectionTag index="01" label="About — the person behind UNBOUND" />
+          <SectionTag index="01" label="About — the person behind ARJUN" />
           <Reveal delay={0.1} className="mt-10 hidden lg:block">
             <div className="font-display text-[9rem] font-black leading-none text-outline" aria-hidden>AD</div>
             <p className="ub-label mt-4">{site.creator}<br />{site.role}</p>

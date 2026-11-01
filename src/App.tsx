@@ -22,7 +22,7 @@ function Shell() {
 
   useEffect(() => {
     console.log(
-      '%cUNBOUND%c\nThink beyond. Build without limits.\nHello, fellow engineer — this site is built with React, Three.js, R3F, GSAP & Framer Motion.\nTry the Konami code, or `unbound --unleash` in the terminal.',
+      '%cARJUN%c\nThink beyond. Build without limits.\nHello, fellow engineer — this site is built with React, Three.js, R3F, GSAP & Framer Motion.\nTry the Konami code, or `arjun --unleash` in the terminal.',
       'color:#C5FF55;font:900 28px sans-serif;letter-spacing:-2px',
       'color:#858B80;font:12px monospace',
     );

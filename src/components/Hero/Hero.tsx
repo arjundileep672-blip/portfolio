@@ -84,7 +84,7 @@ export function Hero() {
             <span>{site.status}</span>
           </div>
           <div data-hero="fade" className="hidden text-right font-mono text-[10px] uppercase leading-relaxed tracking-[0.18em] text-muted md:block" aria-hidden>
-            <div>SYS/UNBOUND v1.0</div>
+            <div>SYS/ARJUN v1.0</div>
             <PointerReadout />
             <div>STATE <span className="text-acid">{lastAction}</span></div>
           </div>
@@ -94,9 +94,9 @@ export function Hero() {
           <p data-hero="fade" className="ub-label mb-4 max-w-[34ch] sm:mb-6">
             AI/ML Engineering &nbsp;·&nbsp; Software Engineering &nbsp;·&nbsp; Research
           </p>
-          <h1 id="hero-title" className="display-xl select-none" aria-label="UNBOUND">
+          <h1 id="hero-title" className="display-xl select-none" aria-label="ARJUN">
             <span className="flex overflow-hidden" aria-hidden>
-              {'UNBOUND'.split('').map((c, i) => (
+              {'ARJUN'.split('').map((c, i) => (
                 <span key={i} data-hero="char" className={`inline-block ${i === 2 ? 'text-acid' : ''}`}>{c}</span>
               ))}
             </span>

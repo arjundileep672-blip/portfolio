@@ -10,7 +10,7 @@ export function Footer() {
     <footer className="border-t border-line section-pad pb-8 pt-14">
       <div className="grid gap-10 md:grid-cols-12">
         <div className="md:col-span-5">
-          <p className="font-display text-4xl font-black tracking-tightest sm:text-6xl">UN<span className="text-acid">B</span>OUND</p>
+          <p className="font-display text-4xl font-black tracking-tightest sm:text-6xl">AR<span className="text-acid">J</span>UN</p>
           <p className="ub-label mt-4">{site.tagline}</p>
         </div>
         <nav aria-label="Footer" className="md:col-span-4">
@@ -31,7 +31,7 @@ export function Footer() {
         </div>
       </div>
       <div className="mt-14 flex flex-col justify-between gap-3 border-t border-line pt-6 sm:flex-row">
-        <p className="font-mono text-[11px] text-muted">© {year} UNBOUND — designed &amp; engineered by {site.creator}.</p>
+        <p className="font-mono text-[11px] text-muted">© {year} ARJUN — designed &amp; engineered by {site.creator}.</p>
         <p className="font-mono text-[11px] text-muted">
           <span className="hidden sm:inline">Psst — ↑↑↓↓←→←→BA · </span>Ctrl K for commands
         </p>

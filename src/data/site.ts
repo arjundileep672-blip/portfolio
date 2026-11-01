@@ -10,7 +10,7 @@ export interface SocialLink {
 }
 
 export const site = {
-  brand: 'UNBOUND',
+  brand: 'ARJUN',
   creator: 'Arjun Dileep',
   role: 'Aspiring AI/ML Engineer · Software Engineer',
   tagline: 'THINK BEYOND. BUILD WITHOUT LIMITS.',
